@@ -1,17 +1,17 @@
 package team1.togather.domain;
 
 public class Member {
-	private int mnum;
+	private long mnum;
 	private String  maddr;
 	private String pfrloc;
 	private String mname;
-	private String gender;
-	private String birth;
+	private String gender; //성별비율 할지말지
+	private String birth; // 나이대 보여주기
 	private String pwd;
 	private String phone;
 	private int athur;
 	public Member() {}
-	public Member(int mnum, String maddr, String pfrloc, String mname, String gender, String birth, String pwd,
+	public Member(long mnum, String maddr, String pfrloc, String mname, String gender, String birth, String pwd,
 			String phone, int athur) {
 		super();
 		this.mnum = mnum;
@@ -24,10 +24,10 @@ public class Member {
 		this.phone = phone;
 		this.athur = athur;
 	}
-	public int getMnum() {
+	public long getMnum() {
 		return mnum;
 	}
-	public void setMnum(int mnum) {
+	public void setMnum(long mnum) {
 		this.mnum = mnum;
 	}
 	public String getMaddr() {

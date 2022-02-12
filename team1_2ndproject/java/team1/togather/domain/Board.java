@@ -7,12 +7,13 @@ public class Board {
 	private String bcategory;
 	private String btitle;
 	private long mnum;
+	private String mname;
 	private String bcontent;
 	private String bfile;
 	private long blike;
 	private long bview;
 	private Date rdate;
-	public Board(long bnum, String bcategory, String btitle, long mnum, String bcontent, String bfile, long blike,
+	public Board(long bnum, String bcategory, String btitle, long mnum, String mname, String bcontent, String bfile, long blike,
 			long bview, Date rdate) {
 		super();
 		this.bnum = bnum;
@@ -24,6 +25,13 @@ public class Board {
 		this.blike = blike;
 		this.bview = bview;
 		this.rdate = rdate;
+		this.mname = mname;
+	}
+	public String getMname() {
+		return mname;
+	}
+	public void setMname(String mname) {
+		this.mname = mname;
 	}
 	public Date getRdate() {
 		return rdate;

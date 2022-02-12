@@ -22,11 +22,11 @@
 		   <table border="1" width="600" align="center"  cellpadding="3" cellspacing="1">
 		      <tr>
 			     <td width="30%" align="center">제목</td>
-				 <td align="center"><input type="text" name="btitle" size="60" value="${userId}"></td>
+				 <td align="center"><input type="text" name="btitle" size="60" ></td>
 			  </tr>
 			  <tr>
 			     <td width="30%" align="center">작성자</td>
-				 <td align="center"><input type="text" name="mnum" size="60" value="${userId}" ></td>
+				 <td align="center"><input type="text" name="mname" size="60" value="${userid}" disabled></td>
 			  </tr>
 			  <tr>
 			     <td align="center">카테고리</td>

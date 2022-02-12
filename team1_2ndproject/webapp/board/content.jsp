@@ -21,7 +21,7 @@
 							</tr>
 						<tr>
 							<td align='center'>글쓴이</td>
-							<td>${name}</td>
+							<td>${board.mname}</td>
 						</tr>
 						<tr>
 							<td align='center'>카테고리</td>
@@ -53,16 +53,16 @@
 						<hr width='600' size='2' noshade>
 						<hr width='600' size='2' noshade>
 						<b>
-						<a  href='board.do?m=update&bnum=${board.bnum}&name=${name}'>수정</a>
+						<a  href='board.do?m=update&bnum=${board.bnum}&mname=${name}'>수정</a>
 						 | 
 						<a href='board.do?m=del&bnum=${board.bnum}'>삭제</a> 
 						 | 
 						<a href='board.do'>목록!</a>
 						</b>
 						<hr width='600' size='2' noshade> 
-						<form name="input" method="post" action="../reply/reply.do?m=insert">
-							<input type='text' name='rcontent' size='70%'>
-							<input type="submit" value="전송" onclick="check()">
+						<form name="input" method="post" action="../board/reply.do?m=insert&bnum=${board.bnum}">
+							댓글을 달아주세요▶<input type='text' name='rcontent' size='70%'>
+							<input type="submit" value="전송" onclick="check()" hidden>
 						</form>
 						<hr width='600' size='2' noshade>
 						<table border='1' width='1000' align='center' cellpadding='2'>
@@ -82,10 +82,10 @@
 								<tr>
 							<td align='center'>${reply.mname}</td>
 							<td align='center'>${reply.content}</td>
-							<td align='center'>${reply.r_like }</td>
+							<td align='center'>${reply.r_like}</td>
 							<td align='center'>${reply.rdate}</td>
 							<td align='center'>
-							<a href = 'reply.do?m=update'> 수정 </a><a href='delete'> 삭제 </a><a href='like'> 좋아요 </a>
+							<a href = 'reply.do?m=update1&rseq=${reply.rseq}}&bnum=${board.bnum}'> 수정 </a><a href='reply.do?m=del&rseq=${reply.rseq}&bnum=${board.bnum}'> 삭제 </a><a href='reply.do?m=r_like&rseq=${reply.rseq}&r_like=${reply.r_like}&bnum=${board.bnum}'> 좋아요 </a>
 							</td>
 						</tr>
 						</c:forEach>					

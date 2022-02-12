@@ -42,12 +42,65 @@ public class BoardDAO {
 				String bcategory = rs.getString(2);
 				String btitle = rs.getString(3);
 				long mnum = rs.getLong(4);
-				String bcontent = rs.getString(5);
-				String bfile = rs.getString(6);
-				long blike = rs.getLong(7);
-				long bview = rs.getLong(8);
-				Date rdate = rs.getDate(9);
-				list.add(new Board(bnum, bcategory, btitle, mnum, bcontent, bfile, blike, bview, rdate));
+				String mname = rs.getString(5);
+				String bcontent = rs.getString(6);
+				String bfile = rs.getString(7);
+				long blike = rs.getLong(8);
+				long bview = rs.getLong(9);
+				Date rdate = rs.getDate(10);
+				list.add(new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate));
+			}
+			return list;
+		}catch(SQLException se){
+        	se.printStackTrace();
+        	return null; 
+        }finally{
+           try{
+              if(rs != null) rs.close();
+              if(stmt != null) stmt.close();
+              if(con != null) con.close();
+           }catch(SQLException se){}
+        }
+	}
+	ArrayList<Board> blist(String option, String ocontent){
+		ArrayList<Board> list = new ArrayList<>();
+		Statement stmt = null;
+		Connection con = null;
+		ResultSet rs = null;
+		String sql = SELECT;
+		try {
+			con = ds.getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				long bnum =rs.getLong(1);
+				String bcategory = rs.getString(2);
+				String btitle = rs.getString(3);
+				long mnum = rs.getLong(4);
+				String mname = rs.getString(5);
+				String bcontent = rs.getString(6);
+				String bfile = rs.getString(7);
+				long blike = rs.getLong(8);
+				long bview = rs.getLong(9);
+				Date rdate = rs.getDate(10);
+				if(option.equals("bcategory")){
+					if(bcategory.contains(ocontent)) {
+						list.add(new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate));
+					}
+				}
+				if(option.equals("btitle")) {
+					if(btitle.contains(ocontent)) {
+						list.add(new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate));
+					}
+				}
+				if(option.equals("mname")) {
+					if(mname.contains(ocontent)) {
+						list.add(new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate));
+					}
+				}
+				if(!option.equals("bcategory")&&!option.equals("btitle")&&!option.equals("mname")) {
+					list.add(new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate));
+				}
 			}
 			return list;
 		}catch(SQLException se){
@@ -103,12 +156,13 @@ public class BoardDAO {
 				String bcategory = rs.getString(2);
 				String btitle = rs.getString(3);
 				long mnum = rs.getLong(4);
-				String bcontent = rs.getString(5);
-				String bfile = rs.getString(6);
-				long blike = rs.getLong(7);
-				long bview = rs.getLong(8);
-				Date rdate = rs.getDate(9);
-				board= new Board(bnum, bcategory, btitle, mnum, bcontent, bfile, blike, bview, rdate);
+				String mname = rs.getString(5);
+				String bcontent = rs.getString(6);
+				String bfile = rs.getString(7);
+				long blike = rs.getLong(8);
+				long bview = rs.getLong(9);
+				Date rdate = rs.getDate(10);
+				board= new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate);
 			}
 			return board;
 		}catch(SQLException se){
@@ -153,18 +207,20 @@ public class BoardDAO {
         }
 		return list;
 	}
-	void insert(String bcategory, String btitle, Long mnum ,String bcontent, String bfile) {
+	void insert(String bcategory, String btitle, Long mnum , String mname, String bcontent, String bfile) {
 		  Connection con =null;
 		  PreparedStatement pstmt = null;
-		  String sql = "insert into BOARD values(B_NUM_SEQ.nextval, ?, ?, 1, ?, ?, 0, 0, SYSDATE)";
+		  String sql = "insert into BOARD values(B_NUM_SEQ.nextval, ?, ?, ?, ?, ?, ?, 0, 0, SYSDATE)";
 		  try{
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bcategory);
 			pstmt.setString(2, btitle);
+			pstmt.setLong(3, mnum);
+			pstmt.setString(4, mname);
 			//pstmt.setLong(3, 0L);
-			pstmt.setString(3, bcontent);
-			pstmt.setString(4, bfile); //로직추가해야할수있음
+			pstmt.setString(5, bcontent);
+			pstmt.setString(6, bfile); //로직추가해야할수있음
 			pstmt.executeUpdate(); 
 		  }catch(SQLException se){
 			  se.printStackTrace();
@@ -188,19 +244,14 @@ public class BoardDAO {
 			pstmt.executeUpdate();
 		  }catch(SQLException se){
 			  System.out.println("delete문에러");
-			  try{
-	              if(pstmt != null) pstmt.close();
-	              if(con != null) con.close();
-	           }catch(SQLException see){
-	        	   see.printStackTrace();
-	           }finally{ 
-	               try{
-	                   if(pstmt != null) pstmt.close();
-	                   if(con != null) con.close();
-	                }catch(SQLException see){}
-	             }
-		  } 
-	}
+		  }finally{ 
+	           try{
+	               if(pstmt != null) pstmt.close();
+	               if(con != null) con.close();
+	            }catch(SQLException see){}
+	      }
+	 } 
+	
 	void updateDo(Board dto) {
 		  Connection con =null;
 		  PreparedStatement pstmt = null;

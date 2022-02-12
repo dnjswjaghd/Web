@@ -15,6 +15,9 @@ public class BoardService {
 	public ArrayList<Board> blistS(){
 		return dao.blist();
 	}
+	public ArrayList<Board> blistS(String option, String ocontent){
+		return dao.blist(option, ocontent);
+	}
 	public String getNameByMnumS(Long mnum) {
 		return dao.getNameByMnum(mnum);
 	}
@@ -24,8 +27,8 @@ public class BoardService {
 	public void deleteS(Long bnum) {
 		dao.delete(bnum);
 	}
-	public void insertS(String bcategory, String btitle, Long mnum, String bcontent, String bfile) {
-		dao.insert(bcategory, btitle, mnum ,bcontent, bfile); //값은 mnum을 들고다니지만 보여주는건 전부이름
+	public void insertS(String bcategory, String btitle, Long mnum, String mname, String bcontent, String bfile) {
+		dao.insert(bcategory, btitle, mnum, mname, bcontent, bfile); //값은 mnum을 들고다니지만 보여주는건 전부이름
 	}
 	public void updateDoS(Board dto) {
 		dao.updateDo(dto);

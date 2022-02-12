@@ -60,7 +60,7 @@ public class MemberDAO {
 			System.out.println("phone 2:"+phone);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				int mnum= rs.getInt(1);
+				long mnum= rs.getLong(1);
 				String maddr = rs.getString(2);
 				String pfrloc = rs.getString(3);
 				String mname = rs.getString(4);
@@ -93,7 +93,7 @@ public class MemberDAO {
 			pstmt.setString(1, phone);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				int mnum = rs.getInt(1);
+				long mnum = rs.getLong(1);
 				String maddr = rs.getString(2);
 				String pfrlok = rs.getString(3);
 				String mname = rs.getString(4);

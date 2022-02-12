@@ -14,10 +14,25 @@ private ReplyDAO dao;
    public static ReplyService getInstance() {
       return instance;
    }
+   public ArrayList<Reply> listS(){
+		return dao.list();
+	}
    public ArrayList<Reply> listS(long bnum){
-      return dao.list(bnum);
-   }
-   public boolean insertS(Reply dto) {
-      return dao.insert(dto);
-   }
+		return dao.list(bnum);
+	}
+	public boolean insertS(Reply dto) {
+		return dao.insert(dto);
+	}
+	public ArrayList<Reply> updateS1(long rseq){
+		return dao.update1(rseq);
+	}
+	public boolean updateS2(Reply dto) {
+		return dao.update2(dto);
+	}
+	public void deleteS(long rseq) {
+		dao.delete(rseq);
+	}
+	public boolean r_likeS(Reply dto) {
+		return dao.r_like(dto);
+	}
 }

@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import team1.togather.domain.Reply;
 import team1.togather.model.ReplyService;
@@ -27,9 +28,13 @@ public class ReplyController extends HttpServlet {
       if(m!=null) {
          m = m.trim();
          switch(m){
-            case "list": list(request,response); break;
-            case "input": input(request,response); break;
-            case "insert":insert(request,response);break;
+         case "list": list(request,response); break;
+			case "input": input(request,response); break;
+			case "insert":insert(request,response);break;
+			case "update1":update1(request,response);break;
+			case "update2":update2(request,response);break;
+			case "del":del(request,response);break;
+			case "r_like":r_like(request,response);break;
          }
       }else {
          list(request,response);
@@ -44,7 +49,7 @@ public class ReplyController extends HttpServlet {
     
       RequestDispatcher rd =request.getRequestDispatcher(view);
       rd.forward(request, response);
-      
+
    }
    
    private void input(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{      
@@ -56,56 +61,59 @@ public class ReplyController extends HttpServlet {
    private void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
       ReplyService service =ReplyService.getInstance();
       
-      long bnum =getBnum(request);
-      System.out.println("bnum은1: " + bnum);
-      String mname = request.getParameter("mname");
-      System.out.println("mname은1: " + mname);
-      long mnum =getMnum(request);
-      System.out.println("mnum은1: " + mnum);
-      String content = request.getParameter("content");
-      System.out.println("content은1: " + content);
+      String rcontent = request.getParameter("rcontent");
+      long bnum = Long.parseLong(request.getParameter("bnum"));
+      HttpSession session = request.getSession();
+      String mname = (String)session.getAttribute("userid");
+      long mnum = (Long)session.getAttribute("usermnum") ;
       
-      Reply dto = new Reply(-1,bnum,mname,mnum,content,-1, null, -1);
+      Reply dto = new Reply(-1L,bnum,mname,mnum,rcontent,-1L, null, -1L);
       boolean flag = service.insertS(dto);
-      request.setAttribute("flag", flag);
-      
-      String view ="insert.jsp";
-      RequestDispatcher rd =request.getRequestDispatcher(view);
-      rd.forward(request, response);
-      
+      String view ="reply.do?m=list&bnum="+bnum+"";
+      //RequestDispatcher rd =request.getRequestDispatcher(view);
+      //rd.forward(request, response);
+      response.sendRedirect(view);
    }
-   
-   private long getBnum(HttpServletRequest request){
-       long bnum = -1;
-      String bnumStr = request.getParameter("bnum");
-      if(bnumStr != null){
-         bnumStr = bnumStr.trim();
-         if(bnumStr.length() != 0){
-            try{
-               bnum = Long.parseLong(bnumStr); 
-               return bnum;
-            }catch(NumberFormatException ne){
-            }
-         }
-      }
-      return bnum;
-   }
-   
-   private long getMnum(HttpServletRequest request){
-       long mnum = -1;
-      String mnumStr = request.getParameter("mnum");
-      if(mnumStr != null){
-         mnumStr = mnumStr.trim();
-         if(mnumStr.length() != 0){
-            try{
-               mnum = Long.parseLong(mnumStr); 
-               return mnum;
-            }catch(NumberFormatException ne){
-            }
-         }
-      }
-      return mnum;
-   }
-   
-   
+   private void update1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ReplyService service =ReplyService.getInstance();
+		long rseq = Long.parseLong(request.getParameter("rseq"));
+		ArrayList<Reply> update1 = service.updateS1(rseq);
+		request.setAttribute("rupdate1", update1); 
+		String view ="update1.jsp";
+		RequestDispatcher rd =request.getRequestDispatcher(view);
+		rd.forward(request, response);
+	}
+	private void update2(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ReplyService service =ReplyService.getInstance();
+		long rseq = Long.parseLong(request.getParameter("rseq"));
+		String content = request.getParameter("content");
+		Reply dto = new Reply(rseq,-1,null,-1,content,-1, null, -1);
+		boolean flag = service.updateS2(dto);
+		request.setAttribute("flag", flag);
+		String view ="update2.jsp";
+		RequestDispatcher rd =request.getRequestDispatcher(view);
+		rd.forward(request, response);
+	}
+	private void del(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ReplyService service =ReplyService.getInstance();
+		long rseq = Long.parseLong(request.getParameter("rseq"));
+		long bnum = Long.parseLong(request.getParameter("bnum"));
+		service.deleteS(rseq);
+		response.sendRedirect("reply.do?m=list&bnum="+bnum+"");
+	}
+	private void r_like(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ReplyService service =ReplyService.getInstance();
+		long bnum = Long.parseLong(request.getParameter("bnum"));
+		long rseq = Long.parseLong(request.getParameter("rseq"));
+		long r_like = Long.parseLong(request.getParameter("r_like"));
+		r_like++;
+		Reply dto = new Reply(rseq,-1,null,-1,null,r_like, null, -1);
+		service.r_likeS(dto);
+		ArrayList<Reply> list = service.listS();
+		request.setAttribute("rlist", list);
+		//String view ="list.jsp";
+		//RequestDispatcher rd =request.getRequestDispatcher(view);
+		//rd.forward(request, response);
+		response.sendRedirect("reply.do?m=list&bnum="+bnum+"");
+	}
 }

@@ -90,10 +90,18 @@ public class MemberController extends HttpServlet {
 		}
 		Member m = service.loginS(phone);
 		if(m != null && m.getPhone() !=null && m.getPwd() != null) {
-		if(phone.equals(m.getPhone()) && pwd.equals(m.getPwd())) {
-			HttpSession session = request.getSession(true);
-			session.setAttribute("userid",m.getMname());
-			}
+			if(phone.equals(m.getPhone()) && pwd.equals(m.getPwd())) {
+					HttpSession session = request.getSession(true);
+					session.setAttribute("userid",m.getMname());
+					session.setAttribute("useraddr",m.getMaddr());
+					session.setAttribute("userpfrloc",m.getPfrloc());
+					session.setAttribute("userphone", m.getPhone());
+					session.setAttribute("userathur", m.getAthur());
+					session.setAttribute("usergender", m.getGender());
+					session.setAttribute("userbirth", m.getBirth());
+					session.setAttribute("userpwd", m.getPwd());
+					session.setAttribute("usermnum", m.getMnum());
+				}
 		}
 		request.setAttribute("m",m);
 		request.setAttribute("pwd",pwd);
@@ -138,7 +146,7 @@ public class MemberController extends HttpServlet {
     	HttpSession session = request.getSession(true);
 		session.setAttribute("userid",mname);
     	System.out.println("≥ª¿Ã∏ß : "+mname);
-    	String view ="/";
+    	String view ="../";
 		RequestDispatcher rd =request.getRequestDispatcher(view);
 		rd.forward(request, response);
     }

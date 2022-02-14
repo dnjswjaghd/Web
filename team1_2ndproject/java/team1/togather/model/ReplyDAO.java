@@ -1,10 +1,6 @@
 package team1.togather.model;
 
-import static team1.togather.model.ReplySQL.RINSERT;
-import static team1.togather.model.ReplySQL.RLIKE;
-import static team1.togather.model.ReplySQL.RLIST;
-import static team1.togather.model.ReplySQL.RUPDATE1;
-import static team1.togather.model.ReplySQL.RUPDATE2;
+import static team1.togather.model.ReplySQL.*;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -45,15 +41,16 @@ public class ReplyDAO {
 	         rs = pstmt.executeQuery();
 	            while(rs.next()){
 	               long resq = rs.getLong(1);
+ 	               long mnum = rs.getLong(4);
 	               String mname = rs.getString(3);
 	               String content = rs.getString(5);
 	               long r_like = rs.getLong(6);
 	               Date rdate = rs.getDate(7);
-	               list.add(new Reply(resq, -1, mname, -1, content, r_like, rdate, -1));
+	               list.add(new Reply(resq, -1, mname, mnum, content, r_like, rdate, -1));
 	            }
 	            return list;
 	      }catch(SQLException se){
-	         System.out.println("#ReplyDAO list() se: " + se);
+	         System.out.println("#ReplyDAO list(bnum) se: " + se);
 	         return null;
 	      }finally{
 	         try{
@@ -93,7 +90,7 @@ public class ReplyDAO {
 					}
 					return list;
 			}catch(SQLException se){
-				System.out.println("#ReplyDAO list() se: " + se);
+				System.out.println("#ReplyDAO list(∫Û∞≈) se: " + se);
 				return null;
 			}finally{
 				try{
@@ -180,7 +177,6 @@ public class ReplyDAO {
 				}catch(SQLException se){}
 			}
 	 }
-	 
 	 boolean r_like(Reply dto) {
 			Connection con = null;
 			PreparedStatement pstmt = null;
@@ -196,6 +192,80 @@ public class ReplyDAO {
 				}else return false;
 				}catch(SQLException se){
 				return false;
+			}finally{
+				try{
+					if(pstmt != null) pstmt.close();
+					if(con != null) con.close();
+				}catch(SQLException se){}
+			}
+		}
+	 int like_check(String userphone, long rseq) {
+			Connection con=null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			int flag = -1;
+			String sql = LIKE_SELECT;
+			try{
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, userphone);
+				pstmt.setLong(2, rseq);
+				rs=pstmt.executeQuery();
+				while(rs.next()) {
+					System.out.println("æ∆æ∆"); 
+					//String userphone2 = rs.getString(1);
+					//long rseq2 = rs.getLong(2);
+					flag = rs.getInt(3);
+					return flag;
+				} 
+				return flag;
+			}catch(SQLException se){
+				System.out.println("sql¿Õº¡º«");
+				return flag; 
+			}finally{
+				try{ 
+					if(rs != null) pstmt.close();
+					if(pstmt != null) pstmt.close();
+					if(con != null) con.close();
+				}catch(SQLException se){}
+			}
+	}
+	public void like_insert(String userphone, long rseq) {
+			Connection con=null;
+			PreparedStatement pstmt = null;
+			PreparedStatement pstmt2 = null;
+			String sql = LIKE_INSERT;
+			String sql2 = "commit";
+			try{
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(sql);
+				pstmt2 = con.prepareStatement(sql2);
+				pstmt.setString(1, userphone);
+				pstmt.setLong(2, rseq);
+				pstmt.executeUpdate();
+				pstmt2.executeUpdate(sql2);
+			}catch(SQLException se){
+				se.printStackTrace();
+			}finally{ 
+				try{      
+					if(pstmt != null) pstmt.close();
+					if(con != null) con.close();
+				}catch(SQLException se){}
+			}
+		}
+	public void like_update(String userphone, long rseq, int flag) {
+			Connection con=null;
+			PreparedStatement pstmt = null;
+			String sql = LIKE_UPDATE;
+			try{
+				con = ds.getConnection();
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, flag);
+				pstmt.setString(2, userphone);
+				pstmt.setLong(3, rseq);
+				pstmt.executeUpdate();
+			}catch(SQLException se){
+				se.printStackTrace();
 			}finally{
 				try{
 					if(pstmt != null) pstmt.close();

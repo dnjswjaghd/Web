@@ -2,6 +2,7 @@ package team1.togather.control;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,7 +18,8 @@ import team1.togather.model.ReplyService;
 @WebServlet("/board/reply.do")
 public class ReplyController extends HttpServlet {
    private static final long serialVersionUID = 1L;
-       
+   private static final HashMap<String, Long> useduser = new HashMap<>();
+   
     
     public ReplyController() {
         super();
@@ -76,21 +78,23 @@ public class ReplyController extends HttpServlet {
    }
    private void update1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		ReplyService service =ReplyService.getInstance();
+		request.setAttribute("bnum", request.getParameter("bnum"));
 		long rseq = Long.parseLong(request.getParameter("rseq"));
 		ArrayList<Reply> update1 = service.updateS1(rseq);
 		request.setAttribute("rupdate1", update1); 
-		String view ="update1.jsp";
+		String view ="../reply/update1.jsp";
 		RequestDispatcher rd =request.getRequestDispatcher(view);
 		rd.forward(request, response);
 	}
 	private void update2(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		ReplyService service =ReplyService.getInstance();
+		long bnum = Long.parseLong(request.getParameter("bnum"));
 		long rseq = Long.parseLong(request.getParameter("rseq"));
 		String content = request.getParameter("content");
 		Reply dto = new Reply(rseq,-1,null,-1,content,-1, null, -1);
-		boolean flag = service.updateS2(dto);
+		boolean flag = service.updateS2(dto); 
 		request.setAttribute("flag", flag);
-		String view ="update2.jsp";
+		String view ="reply.do?m=list&bnum="+bnum+""; 
 		RequestDispatcher rd =request.getRequestDispatcher(view);
 		rd.forward(request, response);
 	}
@@ -106,14 +110,33 @@ public class ReplyController extends HttpServlet {
 		long bnum = Long.parseLong(request.getParameter("bnum"));
 		long rseq = Long.parseLong(request.getParameter("rseq"));
 		long r_like = Long.parseLong(request.getParameter("r_like"));
-		r_like++;
+		HttpSession session  = request.getSession();
+		String userphone = (String)session.getAttribute("userphone");
+		
+		int flag = service.like_checkS(userphone, rseq);
+		if(flag == -1) {
+			System.out.println("flag == -1");
+			service.like_insertS(userphone, rseq); 
+			r_like++;
+		}else if(flag == 1) {
+			System.out.println("flag == 1");
+			service.like_updateS(userphone, rseq, 0); 
+			r_like--;
+		}else if(flag ==0) {
+			System.out.println("flag == 0");
+			service.like_updateS(userphone, rseq, 1);
+			r_like++;
+		}
+
+		//useduser.put(stop, rseq);
 		Reply dto = new Reply(rseq,-1,null,-1,null,r_like, null, -1);
 		service.r_likeS(dto);
-		ArrayList<Reply> list = service.listS();
+		ArrayList<Reply> list = service.listS(bnum);
 		request.setAttribute("rlist", list);
 		//String view ="list.jsp";
 		//RequestDispatcher rd =request.getRequestDispatcher(view);
 		//rd.forward(request, response);
 		response.sendRedirect("reply.do?m=list&bnum="+bnum+"");
+		
 	}
 }

@@ -2,6 +2,7 @@ package team1.togather.control;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,7 +18,7 @@ import team1.togather.model.BoardService;
 @WebServlet("/board/board.do")
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
+    private HashMap<String, Long> useduser = new HashMap<>();
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String m = request.getParameter("m");
 		if(m != null) {
@@ -38,14 +39,40 @@ public class BoardController extends HttpServlet {
 	}
 	private void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BoardService service = BoardService.getInstance();
-		ArrayList<Board> blist = service.blistS(); // db내용을 갖고옴
-		ArrayList<String> namelist = new ArrayList<>();
-		for(Board li: blist) {
-			namelist.add(service.getNameByMnumS(li.getMnum()));
+		int pageAt=1;
+		int ps=5;
+		if(request.getAttribute("pageAt")!=null) {
+			pageAt=(Integer)request.getAttribute("pageAt");
 		}
+		if(request.getAttribute("ps")!=null) {
+			ps=(Integer)request.getAttribute("ps");
+		}
+		ArrayList<Board> blist = service.blistS(pageAt, ps); // db내용을 갖고옴
 		request.setAttribute("blist", blist); // jsp한테 보내줌
-		request.setAttribute("namelist", namelist);
 		
+		int totalCount = blist.size();
+		int totalPage = (int) Math.ceil(totalCount / (double) ps);
+		System.out.println("totalpage: "+totalPage);
+		int pageCount = 5;
+		int startPage = ((pageAt - 1) / pageCount) * pageCount + 1;
+		int endPage = startPage + pageCount - 1;
+		// 추가로 조건 설정
+		if( totalPage < pageAt) {
+			pageAt = totalPage;
+		}
+		if ( endPage > totalPage) { 
+			endPage = totalPage;
+		}
+		if (ps>totalCount) {
+			ps=totalCount;
+		}
+		request.setAttribute("totalCount", totalCount);
+		request.setAttribute("totalPage", totalPage);
+		request.setAttribute("pageCount", pageCount);
+		request.setAttribute("startPage", startPage);
+		request.setAttribute("endPage", endPage);
+		request.setAttribute("pageAt", pageAt);
+		request.setAttribute("ps", ps);
 		String view = "list.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);
@@ -74,12 +101,22 @@ public class BoardController extends HttpServlet {
 		Board board = service.getContentS(bnum);	
 		String name = service.getNameByMnumS(board.getMnum());
 		HttpSession session  = request.getSession();
-		String username =(String)session.getAttribute("userid");
+		String userphone =(String)session.getAttribute("userphone");
+		
 		
 		request.setAttribute("board", board); // jsp한테 보내줌
 		request.setAttribute("name", name);
-		service.updateViewS(bnum);
 		String view = "content.jsp";
+		
+			if(useduser.get(userphone)==bnum) {
+				RequestDispatcher rd = request.getRequestDispatcher(view);
+				rd.forward(request, response);
+				return;
+			}
+		
+		service.updateViewS(bnum);
+		useduser.put(userphone, bnum);
+		
 		
 		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);

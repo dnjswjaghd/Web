@@ -3,7 +3,7 @@ package team1.togather.domain;
 import java.sql.Date;
 
 public class Reply {
-   private long resq;
+   private long rseq;
    private long bnum;
    private String mname;
    private long mnum;
@@ -13,9 +13,9 @@ public class Reply {
    private long lev;
    
    public Reply() {}
-   public Reply(long resq, long bnum, String mname, long mnum, String content, long r_like, Date rdate, long lev) {
+   public Reply(long rseq, long bnum, String mname, long mnum, String content, long r_like, Date rdate, long lev) {
       super();
-      this.resq = resq;
+      this.rseq = rseq;
       this.bnum = bnum;
       this.mname = mname;
       this.mnum = mnum;
@@ -25,12 +25,12 @@ public class Reply {
       this.lev = lev;
    }
 
-   public long getResq() {
-      return resq;
+   public long getRseq() {
+      return rseq;
    }
 
-   public void setResq(long resq) {
-      this.resq = resq;
+   public void setRseq(long rseq) {
+      this.rseq = rseq;
    }
 
    public long getBnum() {
@@ -42,7 +42,7 @@ public class Reply {
    }
 
    public String getMname() {
-      return mname;
+      return mname; 
    }
 
    public void setMname(String mname) {

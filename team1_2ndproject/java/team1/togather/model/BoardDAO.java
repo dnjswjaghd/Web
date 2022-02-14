@@ -62,6 +62,46 @@ public class BoardDAO {
            }catch(SQLException se){}
         }
 	}
+	ArrayList<Board> blist(int pageAt, int ps){
+		ArrayList<Board> list = new ArrayList<>();
+		PreparedStatement pstmt = null;
+		Connection con = null;
+		ResultSet rs = null;
+		ResultSet rs2 = null;
+		String sql = SELECT; //select aa.*, rownum rnum from (select * from BOARD order by bnum desc) aa where rnum > ? and rnum <= ?
+		//String sql2="select max(rnum) from (select aa.*, rownum rnum from (select * from BOARD order by bnum desc) aa )";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, pageAt*ps-ps);
+			pstmt.setInt(2, pageAt*ps);
+			rs = pstmt.executeQuery(sql);
+			while(rs.next()) {
+				long bnum =rs.getLong(1);
+				String bcategory = rs.getString(2);
+				String btitle = rs.getString(3);
+				long mnum = rs.getLong(4);
+				String mname = rs.getString(5);
+				String bcontent = rs.getString(6);
+				String bfile = rs.getString(7);
+				long blike = rs.getLong(8);
+				long bview = rs.getLong(9);
+				Date rdate = rs.getDate(10);
+				list.add(new Board(bnum, bcategory, btitle, mnum, mname, bcontent, bfile, blike, bview, rdate));
+			}
+			return list;
+		}catch(SQLException se){
+        	se.printStackTrace();
+        	return null; 
+        }finally{
+           try{
+              if(rs != null) rs.close();
+              if(rs2 != null) rs.close();
+              if(pstmt != null) pstmt.close();
+              if(con != null) con.close();
+           }catch(SQLException se){}
+        }
+	}
 	ArrayList<Board> blist(String option, String ocontent){
 		ArrayList<Board> list = new ArrayList<>();
 		Statement stmt = null;

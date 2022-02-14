@@ -50,7 +50,7 @@ public class MemberController extends HttpServlet {
 		String phone2 = request.getParameter("phone2");
 		String phone3 = request.getParameter("phone3");
 		String phone =(phone2+phone3);
-		Member dto = new Member(-1,maddr,pfrloc,mname,gender,birth,pwd,phone,-1);
+		Member dto = new Member(-1,maddr,pfrloc,mname,gender,birth,pwd,phone,null,-1);
 		System.out.println(maddr);
 		System.out.println(pfrloc);
 		System.out.println(mname);
@@ -85,9 +85,6 @@ public class MemberController extends HttpServlet {
     	String phone = request.getParameter("phone");
 		String pwd = request.getParameter("pwd");
 		MemberService service = MemberService.getInstance();
-		if(phone.length()>3) {
-		phone = phone.substring(3);
-		}
 		Member m = service.loginS(phone);
 		if(m != null && m.getPhone() !=null && m.getPwd() != null) {
 			if(phone.equals(m.getPhone()) && pwd.equals(m.getPwd())) {
@@ -101,6 +98,7 @@ public class MemberController extends HttpServlet {
 					session.setAttribute("userbirth", m.getBirth());
 					session.setAttribute("userpwd", m.getPwd());
 					session.setAttribute("usermnum", m.getMnum());
+					session.setAttribute("useremail", m.getEmail());
 				}
 		}
 		request.setAttribute("m",m);

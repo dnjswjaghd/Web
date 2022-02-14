@@ -35,4 +35,13 @@ private ReplyDAO dao;
 	public boolean r_likeS(Reply dto) {
 		return dao.r_like(dto);
 	}
+	public int like_checkS(String userphone, long rseq) {
+		return dao.like_check(userphone, rseq);
+	}
+	public void like_insertS(String userphone, long rseq) {
+		dao.like_insert(userphone, rseq);
+	}
+	public void like_updateS(String userphone, long rseq, int flag) {
+		dao.like_update(userphone, rseq, flag);
+	}
 }

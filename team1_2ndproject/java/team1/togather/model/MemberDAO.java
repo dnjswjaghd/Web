@@ -67,8 +67,9 @@ public class MemberDAO {
 				String gender = rs.getString(5);
 				String birth = rs.getString(6);
 				String pwd = rs.getString(7);
-				int athur = rs.getInt(9);	
-				return new Member(mnum,maddr,pfrloc,mname,gender,birth,pwd,phone,athur);
+				String email = rs.getString(9);
+				int athur = rs.getInt(10);	
+				return new Member(mnum,maddr,pfrloc,mname,gender,birth,pwd,phone,email,athur); 
 			}else return null;
 		}catch(SQLException se) {
 			System.out.println(se);
@@ -93,17 +94,18 @@ public class MemberDAO {
 			pstmt.setString(1, phone);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				long mnum = rs.getLong(1);
+				long mnum= rs.getLong(1);
 				String maddr = rs.getString(2);
-				String pfrlok = rs.getString(3);
+				String pfrloc = rs.getString(3);
 				String mname = rs.getString(4);
 				String gender = rs.getString(5);
 				String birth = rs.getString(6);
 				String pwd = rs.getString(7);
-				int athur = rs.getInt(9);
+				String email = rs.getString(9);
+				int athur = rs.getInt(10);	
 				//System.out.println(pwd);
 				
-				return new Member(mnum,maddr,pfrlok,mname,gender,birth,pwd,phone,athur);
+				return new Member(mnum,maddr,pfrloc,mname,gender,birth,pwd,phone,email,athur);
 			}else return null;
 		}catch(SQLException se) {
 			return null;

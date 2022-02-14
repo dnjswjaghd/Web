@@ -9,10 +9,11 @@ public class Member {
 	private String birth; // 나이대 보여주기
 	private String pwd;
 	private String phone;
+	private String email;
 	private int athur;
 	public Member() {}
 	public Member(long mnum, String maddr, String pfrloc, String mname, String gender, String birth, String pwd,
-			String phone, int athur) {
+			String phone, String email, int athur) {
 		super();
 		this.mnum = mnum;
 		this.maddr = maddr;
@@ -23,6 +24,13 @@ public class Member {
 		this.pwd = pwd;
 		this.phone = phone;
 		this.athur = athur;
+		this.email = email;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public long getMnum() {
 		return mnum;

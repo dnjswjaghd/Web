@@ -6,10 +6,20 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
+<script>
+
+	window.onpageshow = function(event) {
+	if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+	// Back Forward Cache로 브라우저가 로딩될 경우 혹은 브라우저 뒤로가기 했을 경우
+	       location.href='board.do';
+	   }
+	}
+
+</script>
 <body>
 <center>
 						<hr width='600' size='2' noshade>
-						<h2>Simple Board with MVC with Jinun</h2>
+						<h2>ToGather 게시글</h2>
 						&nbsp;&nbsp;&nbsp;
 						<a href='input.jsp'>글쓰기 </a>
 						<hr width='600' size='2' noshade>
@@ -24,7 +34,7 @@
 							<td>${board.mname}</td>
 						</tr>
 						<tr>
-							<td align='center'>카테고리</td>
+							<td align='center'>카테고리</td> 
 							<td>${board.bcategory}</td>
 						</tr>
 						<tr>
@@ -36,14 +46,6 @@
 							<td>${board.bcontent}</td>
 						</tr>
 						<tr>
-							<td align='center'>파일</td>
-							<td>${board.bfile}</td>
-						</tr>
-						<tr>
-							<td align='center'>좋아요</td>
-							<td>${board.blike}</td>
-						</tr>
-						<tr>
 							<td align='center'>조회수</td>
 							<td>${board.bview}</td>
 						</tr>
@@ -53,11 +55,18 @@
 						<hr width='600' size='2' noshade>
 						<hr width='600' size='2' noshade>
 						<b>
+						<% Board board = (Board)request.getAttribute("board");
+						   long writer_mnum = board.getMnum();
+						   long session_mnum = (Long)session.getAttribute("usermnum");
+						%>
+						<% if(writer_mnum==session_mnum){ %>
 						<a  href='board.do?m=update&bnum=${board.bnum}&mname=${name}'>수정</a>
 						 | 
+						 
 						<a href='board.do?m=del&bnum=${board.bnum}'>삭제</a> 
 						 | 
-						<a href='board.do'>목록!</a>
+						<%}%>
+						<a href='board.do'>목록</a>
 						</b>
 						<hr width='600' size='2' noshade> 
 						<form name="input" method="post" action="../board/reply.do?m=insert&bnum=${board.bnum}">
@@ -73,22 +82,34 @@
 							<th align='center' width='15%'>작성일</th>
 							<th align='center' width='30%'></th>
 						</tr>
+						
 						<c:if test ="${empty rlist}">
 									<tr>
 										<td colspan="5" style ="text-align:center">데이터가 하나도없네요</td>				
 									</tr>
 						</c:if>
-						<c:forEach items = "${rlist}" var ="reply">
+						<% long mnum = (Long)session.getAttribute("usermnum");
+						   ArrayList<Reply> rlist = (ArrayList<Reply>)request.getAttribute("rlist");
+						  
+						   for(int i=0; i<rlist.size(); i++){
+						%>
+						
 								<tr>
-							<td align='center'>${reply.mname}</td>
-							<td align='center'>${reply.content}</td>
-							<td align='center'>${reply.r_like}</td>
-							<td align='center'>${reply.rdate}</td>
+							<td align='center'><%=rlist.get(i).getMname()%></td>
+							<td align='center'><%=rlist.get(i).getContent()%></td>
+							<td align='center'><%=rlist.get(i).getR_like()%></td>
+							<td align='center'><%=rlist.get(i).getRdate()%></td>
 							<td align='center'>
-							<a href = 'reply.do?m=update1&rseq=${reply.rseq}}&bnum=${board.bnum}'> 수정 </a><a href='reply.do?m=del&rseq=${reply.rseq}&bnum=${board.bnum}'> 삭제 </a><a href='reply.do?m=r_like&rseq=${reply.rseq}&r_like=${reply.r_like}&bnum=${board.bnum}'> 좋아요 </a>
+							<% System.out.println("rlist의 mnum: "+rlist.get(i).getMnum()+"session에서가져온 mnum: "+mnum);
+							if(rlist.get(i).getMnum()==mnum){ 
+							%>
+								<a href = 'reply.do?m=update1&rseq=<%=rlist.get(i).getRseq()%>&bnum=${board.bnum}'> 수정 </a>
+								<a href='reply.do?m=del&rseq=<%=rlist.get(i).getRseq()%>&bnum=${board.bnum}'> 삭제 </a>
+							<% } %>
+							<a href='reply.do?m=r_like&rseq=<%=rlist.get(i).getRseq()%>&r_like=<%=rlist.get(i).getR_like()%>&bnum=${board.bnum}'> 좋아요 </a>
 							</td>
 						</tr>
-						</c:forEach>					
+						<% } %>
 						</table>
 <hr width='600' size='2' noshade>
 						</center>

@@ -26,7 +26,8 @@
 			  </tr>
 			  <tr>
 			     <td width="30%" align="center">작성자</td>
-				 <td align="center"><input type="text" name="mname" size="60" value="${userid}" disabled></td>
+				 <td align="center"><input type="text" name="disabled" size="60" value="${userid}" disabled></td>
+				 <td align="center"><input type="hidden" name="mname" size="60" value="${userid}" hidden></td>
 			  </tr>
 			  <tr>
 			     <td align="center">카테고리</td>

@@ -66,6 +66,7 @@ public class ReplyController extends HttpServlet {
       String rcontent = request.getParameter("rcontent");
       long bnum = Long.parseLong(request.getParameter("bnum"));
       HttpSession session = request.getSession();
+      
       String mname = (String)session.getAttribute("userid");
       long mnum = (Long)session.getAttribute("usermnum") ;
       
@@ -82,7 +83,7 @@ public class ReplyController extends HttpServlet {
 		long rseq = Long.parseLong(request.getParameter("rseq"));
 		ArrayList<Reply> update1 = service.updateS1(rseq);
 		request.setAttribute("rupdate1", update1); 
-		String view ="../reply/update1.jsp";
+		String view ="../reply/update1_1.jsp";
 		RequestDispatcher rd =request.getRequestDispatcher(view);
 		rd.forward(request, response);
 	}
@@ -113,7 +114,7 @@ public class ReplyController extends HttpServlet {
 		HttpSession session  = request.getSession();
 		String userphone = (String)session.getAttribute("userphone");
 		
-		int flag = service.like_checkS(userphone, rseq);
+		int flag = service.like_checkS(userphone, rseq); // -1 : 없는것 확인 , 0 : 찜했다가 취소된상태, 1: 지금찜하고있는상태
 		if(flag == -1) {
 			System.out.println("flag == -1");
 			service.like_insertS(userphone, rseq); 
@@ -127,6 +128,7 @@ public class ReplyController extends HttpServlet {
 			service.like_updateS(userphone, rseq, 1);
 			r_like++;
 		}
+		
 
 		//useduser.put(stop, rseq);
 		Reply dto = new Reply(rseq,-1,null,-1,null,r_like, null, -1);

@@ -41,18 +41,20 @@ public class BoardController extends HttpServlet {
 		BoardService service = BoardService.getInstance();
 		int pageAt=1;
 		int ps=5;
-		if(request.getAttribute("pageAt")!=null) {
-			pageAt=(Integer)request.getAttribute("pageAt");
+		if(request.getParameter("pageAt")!=null) {
+			pageAt=Integer.parseInt(request.getParameter("pageAt"));
 		}
-		if(request.getAttribute("ps")!=null) {
-			ps=(Integer)request.getAttribute("ps");
+		if(request.getParameter("ps")!=null) {
+			ps=Integer.parseInt(request.getParameter("ps"));
 		}
-		ArrayList<Board> blist = service.blistS(pageAt, ps); // db내용을 갖고옴
-		request.setAttribute("blist", blist); // jsp한테 보내줌
 		
-		int totalCount = blist.size();
+		System.out.println("board컨트롤러안 pageAt: "+pageAt+" ps: "+ ps);
+		ArrayList<Board> blist = service.blistS(pageAt, ps); // db내용을 갖고옴
+		ArrayList<Board> wholeblist = service.blistS();
+		request.setAttribute("blist", blist); // jsp한테 보내줌 
+		request.setAttribute("wholeblist", wholeblist);
+		int totalCount = wholeblist.size();
 		int totalPage = (int) Math.ceil(totalCount / (double) ps);
-		System.out.println("totalpage: "+totalPage);
 		int pageCount = 5;
 		int startPage = ((pageAt - 1) / pageCount) * pageCount + 1;
 		int endPage = startPage + pageCount - 1;
@@ -73,7 +75,7 @@ public class BoardController extends HttpServlet {
 		request.setAttribute("endPage", endPage);
 		request.setAttribute("pageAt", pageAt);
 		request.setAttribute("ps", ps);
-		String view = "list.jsp";
+		String view = "list2.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);
 	}
@@ -81,16 +83,50 @@ public class BoardController extends HttpServlet {
 		BoardService service = BoardService.getInstance();
 		String option = request.getParameter("option"); //sql문 where절 왼쪽항
 		String ocontent = request.getParameter("ocontent");
-		ArrayList<Board> blist = service.blistS(option, ocontent); // db내용을 갖고옴
-		ArrayList<String> namelist = new ArrayList<>();
-		for(Board li: blist) {
-			namelist.add(service.getNameByMnumS(li.getMnum()));
+		if(option.equals("none") || ocontent.equals("")) {
+			String view = "board.do";
+			response.sendRedirect(view);
+			return;
 		}
+		System.out.println(option+" olist "+ocontent);
+		int pageAt=1;
+		int ps=5;
+		if(request.getParameter("pageAt")!=null) { 
+			pageAt=Integer.parseInt(request.getParameter("pageAt"));
+		}
+		if(request.getParameter("ps")!=null) {
+			ps=Integer.parseInt(request.getParameter("ps"));
+		}
+		
+		ArrayList<Board> blist = service.blistS(option, ocontent); // db내용을 갖고옴
 		request.setAttribute("blist", blist); // jsp한테 보내줌
-		request.setAttribute("namelist", namelist);
+        
+		ArrayList<Board> wholeblist = service.blistS();
+		request.setAttribute("wholeblist", blist);
+		int totalCount = blist.size();
+		int totalPage = 1; 
+		int pageCount = 5;
+		int startPage = ((pageAt - 1) / pageCount) * pageCount + 1;
+		int endPage = startPage + pageCount - 1;
+		// 추가로 조건 설정
+		if( totalPage < pageAt) {
+			pageAt = totalPage;
+		}
+		if ( endPage > totalPage) { 
+			endPage = totalPage;
+		}
+		if (ps>totalCount) {
+			ps=totalCount;
+		}
+		request.setAttribute("totalCount", totalCount);
+		request.setAttribute("totalPage", totalPage);
+		request.setAttribute("pageCount", pageCount);
+		request.setAttribute("startPage", startPage);
+		request.setAttribute("endPage", endPage);
+		request.setAttribute("pageAt", pageAt);
+		request.setAttribute("ps", ps);
 		
-		
-		String view = "list.jsp";
+		String view = "list2.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);
 	}
@@ -100,13 +136,20 @@ public class BoardController extends HttpServlet {
 		System.out.println("bnum: "+bnum);
 		Board board = service.getContentS(bnum);	
 		String name = service.getNameByMnumS(board.getMnum());
-		HttpSession session  = request.getSession();
-		String userphone =(String)session.getAttribute("userphone");
+		System.out.println(name);
 		
+		HttpSession session  = request.getSession();
+		String userphone = "유저폰";
+		if((String)session.getAttribute("userphone")!=null) {
+		System.out.println("널값확인");
+			userphone =(String)session.getAttribute("userphone");
+		
+		}
 		
 		request.setAttribute("board", board); // jsp한테 보내줌
 		request.setAttribute("name", name);
-		String view = "content.jsp";
+		String view = "content2.jsp";
+		
 		
 			if(useduser.get(userphone)==bnum) {
 				RequestDispatcher rd = request.getRequestDispatcher(view);
@@ -129,7 +172,7 @@ public class BoardController extends HttpServlet {
 		response.sendRedirect("board.do?m=list");
 	}
 	private void input(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.sendRedirect("input.jsp");
+		response.sendRedirect("input2.jsp");
 	}
 	private void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BoardService service = BoardService.getInstance();
@@ -153,7 +196,7 @@ public class BoardController extends HttpServlet {
 		request.setAttribute("board", board); // jsp한테 보내줌
 		request.setAttribute("name", name);
 		
-		String view = "updateform.jsp";
+		String view = "updateform2.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);
 	}

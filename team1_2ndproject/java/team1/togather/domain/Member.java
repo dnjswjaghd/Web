@@ -5,15 +5,16 @@ public class Member {
 	private String  maddr;
 	private String pfrloc;
 	private String mname;
-	private String gender; //성별비율 할지말지
-	private String birth; // 나이대 보여주기
+	private String gender;
+	private String birth;
 	private String pwd;
 	private String phone;
 	private String email;
+	private String category;
 	private int athur;
 	public Member() {}
 	public Member(long mnum, String maddr, String pfrloc, String mname, String gender, String birth, String pwd,
-			String phone, String email, int athur) {
+			String phone,String email,String category, int athur) {
 		super();
 		this.mnum = mnum;
 		this.maddr = maddr;
@@ -23,14 +24,16 @@ public class Member {
 		this.birth = birth;
 		this.pwd = pwd;
 		this.phone = phone;
+		this.email = email;
+		this.category = category;
 		this.athur = athur;
-		this.email = email;
 	}
-	public String getEmail() {
-		return email;
+	
+	public String getCategory() {
+		return category;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	public long getMnum() {
 		return mnum;
@@ -79,6 +82,13 @@ public class Member {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public int getAthur() {
 		return athur;

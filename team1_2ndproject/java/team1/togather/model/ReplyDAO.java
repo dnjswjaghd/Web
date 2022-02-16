@@ -203,7 +203,7 @@ public class ReplyDAO {
 			Connection con=null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			int flag = -1;
+			int flag = -1; // -1 : 없는것 확인 , 0 : 찜했다가 취소된상태, 1: 지금찜하고있는상태
 			String sql = LIKE_SELECT;
 			try{
 				con = ds.getConnection();

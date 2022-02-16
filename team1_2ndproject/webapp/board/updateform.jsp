@@ -15,15 +15,15 @@
 		  -->
 		<table border='1' width='600' align='center' cellpadding='3' cellspacing='1'><tr>
 			<td width='30%' align='center'>글쓴이</td>
-			<td align='center'><input type='text' name='mname' size='60' value='${name}' disabled></td>
+			<td align='center'><input type='text'  size='60' name='mname' value='${name}' disabled></td>
 		</tr>
 		<tr>
 			<td width='30%' align='center'>카테고리</td>
-			<td align='center'><input type='text' name='bcategory' size='60' value='${board.bcategory}'></td>
+			<td align='center'><input type='text' size='60' name='bcategory'  value='${board.bcategory}'></td>
 		</tr>
 		<tr>
 			<td width='30%' align='center'>글제목</td>
-			<td align='center'><input type='text' name='btitle' size='60' value='${board.btitle}'></td>
+			<td align='center'><input type='text'  size='60' name='btitle' value='${board.btitle}'></td>
 		</tr>
 		<tr>
 			<td width='30%' align='center'>글내용</td>

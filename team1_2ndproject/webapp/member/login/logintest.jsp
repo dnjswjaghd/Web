@@ -23,7 +23,7 @@
 		<div class="row">
 			<!-- 입력폼 그리드 -->
 			<div class="col-lg-4">
-				<form action="../togather/login.do?m=login" method="post">
+				<form action="../login.do?m=login" method="post">
 					<!-- ID입력 -->
 					<div class="input-group mt-3 mb-1">
 						<div class="input-group-prepend">

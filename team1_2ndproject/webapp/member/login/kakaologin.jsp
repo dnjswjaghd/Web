@@ -20,7 +20,6 @@
                         input.mname.value=res.properties['nickname'];
                       alert(res.kakao_account.email + ' (' + res.properties['nickname'] + ') 님 환영합니다.');
                       document.input.submit();
-                       
                     }
                 })
             }
@@ -32,7 +31,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form name="input" action="../togather/login.do?m=loginkakao" method="post">
+<form name="input" action="../login.do?m=loginkakao" method="post">
 <br><a href="javascript:kakaoLogin()">카톡</a> <br>
 <input type="hidden" name="mname" class="form-control"
 							placeholder="Input name" aria-label="이름"

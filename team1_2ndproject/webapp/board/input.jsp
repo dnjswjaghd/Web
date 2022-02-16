@@ -30,7 +30,7 @@
 				 <td align="center"><input type="hidden" name="mname" size="60" value="${userid}" hidden></td>
 			  </tr>
 			  <tr>
-			     <td align="center">카테고리</td>
+			     <td align="center">관심사</td>
 				 <td align="center"><input type="text" name="bcategory" size="60"></td>
 			  </tr>
 			  <tr>

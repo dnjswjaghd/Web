@@ -32,6 +32,40 @@
     <script src="../js/splitting.js"></script>
     <script src="../js/typed.js"></script>
   </head>
+  <script >
+       function f_login()
+       {
+           baby_login = window.open(
+           "../member/login2.jsp", "login_name", 
+                "width=600, height=900, top=100, left=100");
+       }
+    </script>
+
+
+<script>
+       function f_join()
+       {
+           baby_login = window.open(
+           "../member/join2.jsp", "join2_name", 
+                "width=600, height=1100, top=100, left=100");
+       }
+    </script>
+
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+      <script>
+      Kakao.init('11400a9267d93835389eb9255fcaad0b');
+      function signout(){
+        if(Kakao.Auth.getAccessToken() != null){
+    	  Kakao.Auth.logout(function(){
+    	    setTimeout(function(){
+              location.href="../member/sessionLogout.jsp";
+           },500);
+         });
+        }else{
+        	location.href="../member/sessionLogout.jsp";
+        }
+      }
+      </script>
   <body>
   <% 	int pageAt = 1;
 	if((Integer)request.getAttribute("pageAt")!=null){    
@@ -46,7 +80,7 @@
       <div class="container px-4 px-lg-5">
         <h1 class="logo">
           <a href="../"
-            ><img src="imgs/topLogo.png" alt="ToGather" title="홈으로 이동"
+            ><img src="../imgs/topLogo.png" alt="ToGather" title="홈으로 이동"
           /></a>
         </h1>
         <button
@@ -66,12 +100,12 @@
               <a
                 class="nav-link active"
                 aria-current="page"
-                href="introduce.html"
+                href="../customer/introduce.jsp"
                 >ToGather란?</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="notice.html">공지사항</a>
+              <a class="nav-link" href="../customer/notice.jsp">공지사항</a>
             </li>
             <li class="nav-item dropdown">
               <a
@@ -81,29 +115,28 @@
                 role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                >자주하는 질문(Q&A 게시판필요)</a
+                >자주하는 질문</a
               >
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
-                  <a class="dropdown-item" href="FAQ.html">FAQ</a>
+                  <a class="dropdown-item" href="../customer/FAQ.jsp">FAQ</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="QA.html">Q&A(게시판필요)</a>
+                  <a class="dropdown-item" href="../customer/Q&A.jsp">Q&A</a>
                 </li>
               </ul>
             </li>
           </ul>
           <form class="d-flex">
-            <!-- 로그인시 보이게하기
-            <button class="btn btn-outline-success" type="button" onclick="location.href='logout.html'">
-              <i class="bi bi-person-check-fill"></i>
-              로그아웃
-            </button>
-          -->
+           
+           <% 
+            String userid=(String)session.getAttribute("userid");
+            if(userid==null){    
+            %>
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='login.html'"
+              onclick="location.href='javascript:f_login()'"
             >
               <i class="bi bi-person-fill"></i>
               로그인
@@ -111,15 +144,33 @@
             <button
               class="btn btn-outline-primary"
               type="button"
-              onclick="location.href='join.html'"
+              onclick="location.href='javascript:f_join()'"
             >
               <i class="bi bi-person-plus-fill"></i>
               회원가입
             </button>
+          <% }else {%>
+            		<button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
+             			 <i class="bi bi-person-fill"></i>
+             				 로그아웃
+           			 </button>
+			<%}%>
+              <script >
+			       function check(){   
+			          if(<%=userid%>==null){
+			        	  alert('로그인후 가능합니다');
+			        	  return;
+			          }
+			          else{
+			        	  location.href = "../";
+			        	  return;
+			          }
+			       }
+    		</script>
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='wish.html'"
+              onclick="location.href='../customer/wish.jsp'"
             >
               <i class="bi-cart-fill me-1"></i>
               찜
@@ -129,7 +180,7 @@
             <button
               class="btn btn-outline-danger"
               type="button"
-              onclick="location.href='groupCreate.html'"
+              onclick="check()"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
@@ -162,7 +213,9 @@
                 <li><a class="dropdown-item" href="board.do?ps=10">10</a></li>
                 <li><a class="dropdown-item" href="board.do?ps=15">15</a></li>
               </ul>
+              
               <!--운영자만 가능한 글쓰기 버튼--> 
+              <c:if test="${not empty userphone}">
               <a
                 type="submit"
                 class="btn btn-secondary btn-sm mb-1"
@@ -171,23 +224,16 @@
               >
                 글쓰기
               </a>
+              </c:if>
           </div>
-			<form name="input2" method="post" action="board.do?m=olist&pageAt=<%=pageAt%>&ps=<%=ps2%>">
-				<select name="option">
-					<option value="bcategory">카테고리</option>
-					<option value="btitle">제목</option>
-					<option value="mname">작성자</option>
-				</select>
-				<input type="text" name="ocontent">
-				<input type="submit" value="전송" onclick="check()">
-			</form>
+			
           <table
             class="table table-striped table-hover table-bordered contents-center text-center"
           >
             <thead class="table-primary">
               <tr>
                 <th scope="col" style="width: 20px; height: auto">#</th>
-                <th scope="col" style="width: 10px; height: auto">카테고리</th>
+                <th scope="col" style="width: 10px; height: auto">관심사</th>
                 <th scope="col" style="width: 120px; height: auto">제목</th>
 				<th scope="col" style="width: 10px; height: auto">작성자</th>
 				<th scope="col" style="width: 10px; height: auto">조회수</th>
@@ -219,7 +265,17 @@
               <%}%>
             </tbody>
           </table>
+          
           <nav aria-label="Page navigation example">
+          <form class="btn btn-outline-primary btn-sm mb-1 mx-md-0" name="input2" method="post" action="board.do?m=olist&pageAt=<%=pageAt%>&ps=<%=ps2%>">
+				<select name="option">
+					<option value="bcategory">카테고리</option>
+					<option value="btitle">제목</option>
+					<option value="mname">작성자</option>
+				</select>
+				<input type="text" name="ocontent">
+				<input type="submit" value="전송" onclick="check()" hidden> 
+			 </form> 
             <ul
               id="notice_page"
               class="pagination pagination-sm"

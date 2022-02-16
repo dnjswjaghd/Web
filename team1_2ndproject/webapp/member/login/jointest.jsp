@@ -7,8 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-<link rel="stylesheet" href="../css/bootstrap.css">
-<script type="text/javascript" src="../js/bootstrap.js"></script>
+<link rel="stylesheet" href="../../css/bootstrap.css">
+<script type="text/javascript" src="../../js/bootstrap.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
@@ -94,7 +94,7 @@
 						</div>
 						<input type="tel" name="phone1"size="10" class="form-control"
 							placeholder="Input number" aria-label="폰번호"
-							aria-describedby="basic-addon1" required>
+							aria-describedby="basic-addon1" required value="010" disabled>
 							-
 						<input type="tel" name="phone2"size="10" class="form-control"
 							placeholder="Input number" aria-label="폰번호"
@@ -111,10 +111,10 @@
 							<span class="input-group-text" id="basic-addon1">성별</span>
 						</div>
 							<input type="radio" name="gender" class="form-control"
-							size="60"aria-describedby="basic-addon1" required>남
+							size="60" value="남">남
 							
 							<input align="center" type="radio" name="gender" class="form-control"
-							size="60" required>여							 
+							size="60" value="여">여							 
 					</div>
 					
 					<!-- 자동 로그인 -->

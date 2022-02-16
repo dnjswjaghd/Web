@@ -11,12 +11,8 @@
 session.invalidate(); // 세션 초기화
 %>
 <script>
-function Logout(){ 
-	sessionStorage.clear(); 
-	}
-
 alert("로그아웃 되었습니다.");
-location.href='../../';
+location.href='../';
 </script>
 </body>
 </html>

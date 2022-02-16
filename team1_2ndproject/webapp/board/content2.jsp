@@ -18,13 +18,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-	<script>
-	window.onpageshow = function(event){
-		if(event.persisted) || (window.performance && window.performance.naviation.type ==2)){
-			location.href='board.do';
-		}
-	}
-	</script>
+	
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="../css/styles.css" rel="stylesheet" />
     <link href="../css/groupList.css" rel="stylesheet" />
@@ -32,14 +26,57 @@
     <script src="../js/splitting.js"></script>
     <script src="../js/typed.js"></script>
   </head>
-  <body>
+  
+  <script >
+       function f_login()
+       {
+           baby_login = window.open(
+           "../member/login2.jsp", "login_name", 
+                "width=600, height=900, top=100, left=100");
+       }
+    </script>
+
+
+<script>
+       function f_join()
+       {
+           baby_login = window.open(
+           "../member/join2.jsp", "join2_name", 
+                "width=600, height=1100, top=100, left=100");
+       }
+    </script>
+
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+      <script>
+      Kakao.init('11400a9267d93835389eb9255fcaad0b');
+      function signout(){
+        if(Kakao.Auth.getAccessToken() != null){
+    	  Kakao.Auth.logout(function(){
+    	    setTimeout(function(){
+              location.href="../member/sessionLogout.jsp";
+           },500);
+         });
+        }else{
+        	location.href="../member/sessionLogout.jsp";
+        }
+      }
+      </script>
+  <script>
+	window.onpageshow = function(event) {
+		if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+		// Back Forward Cache로 브라우저가 로딩될 경우 혹은 브라우저 뒤로가기 했을 경우
+		       location.href='board.do';
+		   }
+		}
+	</script>
+  <body style="background-color: #eee">
 
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light bg-gray">
       <div class="container px-4 px-lg-5">
         <h1 class="logo">
           <a href="../"
-            ><img src="imgs/topLogo.png" alt="ToGather" title="홈으로 이동"
+            ><img src="../imgs/topLogo.png" alt="ToGather" title="홈으로 이동"
           /></a>
         </h1>
         <button
@@ -59,12 +96,12 @@
               <a
                 class="nav-link active"
                 aria-current="page"
-                href="introduce.html"
+                href="../customer/introduce.jsp"
                 >ToGather란?</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="notice.html">공지사항</a>
+              <a class="nav-link" href="../customer/notice.jsp">공지사항</a>
             </li>
             <li class="nav-item dropdown">
               <a
@@ -74,29 +111,28 @@
                 role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                >자주하는 질문(Q&A 게시판필요)</a
+                >자주하는 질문</a
               >
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
-                  <a class="dropdown-item" href="FAQ.html">FAQ</a>
+                  <a class="dropdown-item" href="../customer/FAQ.jsp">FAQ</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="QA.html">Q&A(게시판필요)</a>
+                  <a class="dropdown-item" href="../customer/Q&A.jsp">Q&A</a>
                 </li>
               </ul>
             </li>
           </ul> 
           <form class="d-flex">
-            <!-- 로그인시 보이게하기
-            <button class="btn btn-outline-success" type="button" onclick="location.href='logout.html'">
-              <i class="bi bi-person-check-fill"></i>
-              로그아웃
-            </button>
-          -->
+          
+           <% 
+            String userid=(String)session.getAttribute("userid");
+            if(userid==null){    
+            %>
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='login.html'"
+              onclick="location.href='javascript:f_login()'"
             >
               <i class="bi bi-person-fill"></i>
               로그인
@@ -104,15 +140,21 @@
             <button
               class="btn btn-outline-primary"
               type="button"
-              onclick="location.href='join.html'"
+              onclick="location.href='javascript:f_join()'"
             >
               <i class="bi bi-person-plus-fill"></i>
               회원가입
             </button>
+           <% }else {%>
+            <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
+              <i class="bi bi-person-fill"></i>
+              로그아웃
+            </button>
+			<%}%>
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='wish.html'"
+              onclick="location.href='../customer/wish.jsp'"
             >
               <i class="bi-cart-fill me-1"></i>
               찜
@@ -122,7 +164,7 @@
             <button
               class="btn btn-outline-danger"
               type="button"
-              onclick="location.href='groupCreate.html'"
+              onclick="location.href='../group/groupTab.do?m=groupInput&userid=<%=userid %>'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
@@ -136,75 +178,91 @@
       <div class="container h-75 contents-center">
         <div class="row justify-content-center align-items-center h-75">
             <div class="col-lg-3"></div>
-            <div class="col-lg-6 h-50">
+     
               <table class="table table-bordered">
                 <thead class="table-info text-center">
                   <tr>
-                    <th scope="col" colspan="8">게시글</th>
+                    <th scope="col" colspan="11">게시글</th> 
                   </tr>
                 <tbody>
 				  <tr class="text-center">
                     <th scope="col" name="ntName" class="table-secondary">글제목</th>
-                    <td colspan="7">${board.btitle}</td>   
+                    <td colspan="10">${board.btitle}</td>   
                   </tr>
                   <tr class="text-center">
-                    <th scope="row" class="table-secondary" >카테고리</th> 
-                    <td colspan="7">${board.bcategory}</td>   
+                    <th scope="row" class="table-secondary" >관심사</th> 
+                    <td colspan="10">${board.bcategory}</td>   
                   </tr>
                   <tr class="text-center">
                     <th scope="row" class="table-secondary" >작성자</th>
-                    <td colspan="8">${board.mname}</td>
+                    <td colspan="10">${board.mname}</td>
                   </tr>
                   <tr>
-                    <th scope="row" colspan="8" style="text-align: center;" class="table-secondary">글내용</th>
+                    <th scope="row" colspan="11" style="text-align: center;" class="table-secondary">글내용</th>
                   </tr>
                   <tr>
-                    <td colspan="8" style="line-height: 70px; min-height: 70px; height: 200px;" >${board.bcontent}
+                    <td colspan="11" style="line-height: 70px; min-height: 70px; height: 200px;" >${board.bcontent}
                     </td>
                   </tr>
                 </tbody>
                   <tfoot>
                   <tr>
-                    <th scope="row" colspan="8" style="text-align: center;" class="table-secondary">댓글</th>
+                    <th scope="row" colspan="11" style="text-align: center;" class="table-secondary">댓글</th>  
                   </tr>
 				  
                   <tr class="text-center">
                     <td>작성자</td>
-                    <td colspan="4">내용</td>
+                    <td colspan="5">내용</td>
                     <td colspan="2">좋아요</td>
 					<td colspan="2">작성일</td>
+					<td colspan="2"></td>
                   </tr>
-				  <% long mnum = (Long)session.getAttribute("usermnum");
+				  <% 	long mnum = 0;
+				  if(session.getAttribute("usermnum")!=null) {
+				  			mnum = (Long)session.getAttribute("usermnum");
+				  		}
 						   ArrayList<Reply> rlist = (ArrayList<Reply>)request.getAttribute("rlist");
 						  
 						   for(int i=0; i<rlist.size(); i++){
 					%>
                   <tr>
                     <th scope="row"  style="text-align: center;"><%=rlist.get(i).getMname()%></th> 
-                    <td colspan="4"><%=rlist.get(i).getContent()%></td>
-                    <td colspan="2"><%=rlist.get(i).getR_like()%><i class="bi bi-hand-thumbs-up" align="right" type="button" onclick="location.href='reply.do?m=r_like&rseq=<%=rlist.get(i).getRseq()%>&r_like=<%=rlist.get(i).getR_like()%>&bnum=${board.bnum}'" ></i></td>
+                    <td colspan="5"><%=rlist.get(i).getContent()%></td> 
+                    <td colspan="2"><%=rlist.get(i).getR_like()%>
+                    <% if(mnum!=0){ %>
+                    <i class="bi bi-hand-thumbs-up" onclick="location.href='reply.do?m=r_like&rseq=<%=rlist.get(i).getRseq()%>&r_like=<%=rlist.get(i).getR_like()%>&bnum=${board.bnum}'" ></i>
+                   <%} %>
+                    </td>
 					<td colspan="2"><%=rlist.get(i).getRdate()%></td>
+					<td colspan="2" align='center'>
+							<% System.out.println("rlist의 mnum: "+rlist.get(i).getMnum()+"session에서가져온 mnum: "+mnum);
+							if(rlist.get(i).getMnum()==mnum){ 
+							%>
+								<a href = 'reply.do?m=update1&rseq=<%=rlist.get(i).getRseq()%>&bnum=${board.bnum}'> 수정 </a>
+								<a href='reply.do?m=del&rseq=<%=rlist.get(i).getRseq()%>&bnum=${board.bnum}'> 삭제 </a>
+							<% } %>
+							
+							</td>
                   </tr>
 					<%} %>
                 </tfoot>
               </table>
+              <% if(mnum!=0){ %>
               	<form name="input" method="post" action="../board/reply.do?m=insert&bnum=${board.bnum}"> 
               <div class="input-group"> 
                 <input type="text" name='rcontent' class="form-control" aria-label="Text input with segmented dropdown button">
                 <button type="button" class="btn btn-outline-secondary" onclick="submit()" >댓글등록</button>
               </div>
               </form>
+              <%} %>
               <br/>
               <div class="d-flex justify-content-center mx-1 mb-lg-4">
-                <button
-                  type="button"
-                  class="btn btn-outline-primary"
-                  style="margin: 3px;"
-                  onclick="location.href='board.do'"
-                >
+                <button type="button" class="btn btn-outline-primary" style="margin: 3px;" onclick="location.href='board.do'" >
                   목록으로
                 </button>
-				
+                <% Board board = (Board)request.getAttribute("board"); 
+                	if(board.getMnum()==mnum){
+                %>
                 <button
                 type="button"
                 class="btn btn-outline-info"
@@ -217,30 +275,32 @@
                 type="button"
                 class="btn btn-outline-info"
                 style="margin: 3px;"
-                onclick="location.href='board.do?m=del&bnum=${board.bnum}'"
+                onclick="location.href='board.do?m=del&bnum=${board.bnum}'" 
               >
                 삭제하기
               </button>
-
+			  <%}%>
               </div>
-            </div>  
+              <br/>
+              <footer class="py-5 bg-dark" style="width:150%; overflow: visible">  
+			    <div class="container">
+			      <p class="m-0 text-center text-white">
+			        &copy; Team1 Website 2022
+			      </p>
+			    </div> 
+			  </footer>
             <div class="col-lg-3"></div>
         </div>
     </section>
-
   </body>
-  <footer class="py-5 bg-dark">
-    <div class="container">
-      <p class="m-0 text-center text-white">
-        Copyright &copy; Your Website 2021
-      </p>
-    </div>
-  </footer>
+  
   <!-- Bootstrap core JS-->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Core theme JS-->
-  <script src="js/scripts.js"></script>
+  <script src="../js/scripts.js"></script>
+  
 </html>
+
 
 
 <!--<!DOCTYPE html>

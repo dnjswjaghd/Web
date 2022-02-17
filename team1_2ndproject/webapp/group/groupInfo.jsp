@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=utf-8" import="java.util.ArrayList, team1.togather.domain.GroupTab, team1.togather.domain.*, team1.togather.*"%>
+<%@ page contentType="text/html;charset=utf-8" import="java.util.ArrayList, team1.togather.domain.*, team1.togather.domain.Gathering, team1.togather.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html lang="en">
@@ -26,6 +26,7 @@
     <script src="../js/splitting.js"></script>
     <script src="../js/typed.js"></script>
   </head>
+  
   <script >
        function f_login()
        {
@@ -36,7 +37,7 @@
     </script>
 
 
-	<script>
+<script>
        function f_join()
        {
            baby_login = window.open(
@@ -44,7 +45,14 @@
                 "width=600, height=1100, top=100, left=100");
        }
     </script>
-
+ <script>
+	window.onpageshow = function(event) {
+		if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+		// Back Forward Cache로 브라우저가 로딩될 경우 혹은 브라우저 뒤로가기 했을 경우
+		       location.href='../';
+		   }
+		}
+	</script>
 <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
       <script>
       Kakao.init('11400a9267d93835389eb9255fcaad0b');
@@ -97,7 +105,6 @@
             <li class="nav-item">
               <a class="nav-link" href="../customer/notice.jsp">공지사항</a>
             </li>
-         
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -119,45 +126,46 @@
             </li>
           </ul>
           <form class="d-flex">
-			<% 
+             <% 
             String userid=(String)session.getAttribute("userid");
             if(userid==null){    
             %>
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='javascript:f_login()'">
+              onclick="location.href='javascript:f_login()'"
+            >
               <i class="bi bi-person-fill"></i>
               로그인
+            </button>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              onclick="location.href='javascript:f_join()'"
+            >
+              <i class="bi bi-person-plus-fill"></i>
+              회원가입
             </button>
             <% }else {%>
             <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
               <i class="bi bi-person-fill"></i>
               로그아웃
             </button>
-      		<%}%>
+<%}%>
             <button
-              class="btn btn-outline-primary"
-              type="button"
-              onclick="location.href='javascript:f_join()'">
-              <i class="bi bi-person-plus-fill"></i>
-              회원가입
-            </button>
-            
-            <button
-              class="btn btn-outline-dark"
+              class="btn btn-outline-dark mx-1"
               type="button"
               onclick="location.href='../customer/wish.jsp'"
             >
-              <i class="bi-cart-fill me-1"></i>
+              <i class="bi-cart-fill me-1 mx-2"></i>
               찜
               <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
             </button>
             <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
             <button
-              class="btn btn-outline-danger"
+              class="btn btn-outline-danger mx-1"
               type="button"
-              onclick="location.href='groupTab.do?m=groupInput'"
+              onclick="location.href='../group/groupTab.do?m=groupInput&userid=<%=userid %>'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
@@ -186,13 +194,12 @@
         <div class="col-lg-8">
           <!-- Featured blog post-->
           <div class="card mb-4">
-            <a href="#!"
-              ><img class="card-img-top" src="../imgs/hobby1.jpg" alt="..."
-            /></a>
+              <img class="card-img-top" style="width: 100%; height: 500px" src="../store/${groupTab.fname}" alt="..."
+            />
             <div class="card-body">
-              <div class="small text-muted">${groupTab.rdate}</div>
+              <div class="small text-muted">${groupTab.rdate}, 모임 정원: ${groupTab.limit}</div>
               <h5 class="card-title">#모임소개</h5>
-              <h3 class="card-text">${groupTab.gIntro}</h3>
+              <h3 class="card-text">: ${groupTab.gIntro}</h3>
             </div>
           </div>
           <!-- Nested row for non-featured blog posts-->
@@ -207,9 +214,12 @@
           <!-- Search widget-->
           <div class="car mb-4">
             <div class="list-group">
-              <li class="list-group-item list-group-item-secondary" style="background-color: lavender">
+              <li class="list-group-item list-group-item-secondary" style="background-color: lavender; text-align: center">
                 <b>정모</b>
               </li>
+           <c:if test="${empty gatheringList}">
+           		<div class="list-group-item list-group-item-light">현재 정모가 없습니다.</div>
+           </c:if>
            <c:forEach items="${gatheringList}" var="gathering">
               <a
                 href="groupTab.do?m=gatheringInfo&gSeq=${gathering.gSeq}&ga_seq=${gathering.ga_seq}"
@@ -218,6 +228,7 @@
               >
               
                </c:forEach>
+               
               <button
                 type="button"
                 class="list-group-item list-group-item-action active"
@@ -246,8 +257,7 @@
             </ul>
           </nav>
 
-          <br/>
-          
+          <br />
           <div class="card mb-4">
             <div class="card-header" style="background-color: lavender"><b>모임 멤버</b></div>
             <div class="card-body">
@@ -258,7 +268,6 @@
             </c:forEach>
             </div>
           </div>
-          
           <nav aria-label="Page navigation example">
             <ul
               id="notice_page"
@@ -277,25 +286,50 @@
             </ul>
           </nav>
           <div class="d-grid gap-2 col-6 mx-auto">
-            <button class="btn btn-success mb-5 mt-3" type="button" href="">
+            <button class="btn btn-success mb-5 mt-3" type="button" href="gatheringBoard.html">
                게시판
             </button>
           </div>
-          <div class="d-grid gap-2 col-6 mx-auto">
-            <button class="btn btn-success mb-5 mt-3" type="submit" onclick="location.href='MemInGroup.do?m=MemInGroupgroupjoin&gseq=<%=gSeq%>'">
-               모임가입하기
+       		
+       	<div class="d-flex justify-content-center">
+       		<div class="d-flex justify-content-center mt-3">
+            <button
+              type="button"
+              class="btn btn-outline-success"
+			  style="margin-right: 5px;"
+              onclick="location.href='MemInGroup.do?m=MemInGroupgroupjoin&gSeq=<%=gSeq%>'">
+              가입하기
             </button>
           </div>
-       		
           <div class="d-flex justify-content-center mt-3">
             <button
               type="button"
-              class="btn btn-outline-secondary"
-              onclick="location.href='groupTab.do?m=groupGetUpdate&gSeq=<%=gSeq%>'"
-            >
-              모임 정보 수정하기
+              class="btn btn-outline-danger"
+              onclick="location.href='MemInGroup.do?m=MemInGroupgroupdel&gSeq=<%=gSeq%>'">
+              탈퇴하기
             </button>
-        </div>
+          </div>
+		  </div>
+		  <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center mt-3">
+            <button
+              type="button"
+              class="btn btn-outline-info"
+			  style="margin-right: 5px;"
+              onclick="location.href='groupTab.do?m=groupGetUpdate&gSeq=<%=gSeq%>'">
+              모임정보 수정하기
+            </button>
+          </div>
+          <div class="d-flex justify-content-center mt-3">
+	          <button
+	              type="button"
+	              class="btn btn-outline-danger"
+	              onclick="location.href='groupTab.do?m=groupDelete&gSeq=<%=gSeq%>'">
+              삭제하기
+            </button>
+           </div>
+		 </div>
+           
       </div>
     </div>
         </div>

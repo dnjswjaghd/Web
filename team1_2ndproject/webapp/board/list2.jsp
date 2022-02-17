@@ -269,7 +269,7 @@
           <nav aria-label="Page navigation example">
           <form class="btn btn-outline-primary btn-sm mb-1 mx-md-0" name="input2" method="post" action="board.do?m=olist&pageAt=<%=pageAt%>&ps=<%=ps2%>">
 				<select name="option">
-					<option value="bcategory">카테고리</option>
+					<option value="bcategory">관심사</option>
 					<option value="btitle">제목</option>
 					<option value="mname">작성자</option>
 				</select>

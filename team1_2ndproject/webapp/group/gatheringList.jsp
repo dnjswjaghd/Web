@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=utf-8" import="java.util.ArrayList, team1.togather.domain.Gathering"%> 
+<%@ page contentType="text/html;charset=utf-8" import="java.util.ArrayList, team1.togather.domain.Gathering"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <meta charset='utf-8'>

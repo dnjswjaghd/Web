@@ -113,35 +113,32 @@
               </ul>
             </li>
           </ul>
-          <form class="d-flex">
-           <% 
+           <form class="d-flex">
+            <% 
             String userid=(String)session.getAttribute("userid");
             if(userid==null){    
             %>
             <button
-              class="btn btn-outline-dark"
+              class="btn btn-outline-dark mx-1"
               type="button"
-              onclick="location.href='javscript:f_login()'"
-            >
+              onclick="location.href='javascript:f_login()'">
               <i class="bi bi-person-fill"></i>
               로그인
+            </button>
+            <button
+              class="btn btn-outline-primary mx-1"
+              type="button"
+              onclick="location.href='javascript:f_join()'">
+              <i class="bi bi-person-plus-fill"></i>
+              회원가입
             </button>
             <% }else {%>
             <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
               <i class="bi bi-person-fill"></i>
               로그아웃
             </button>
-			<%}%>
             <button
-              class="btn btn-outline-primary"
-              type="button"
-              onclick="location.href='javascript:f_join()'"
-            >
-              <i class="bi bi-person-plus-fill"></i>
-              회원가입
-            </button>
-            <button
-              class="btn btn-outline-dark"
+              class="btn btn-outline-dark mx-1"
               type="button"
               onclick="location.href='wish.jsp'"
             >
@@ -149,15 +146,15 @@
               찜
               <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
             </button>
-            <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
             <button
-              class="btn btn-outline-danger"
+              class="btn btn-outline-danger mx-1"
               type="button"
               onclick="location.href='../group/groupInput.jsp'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
             </button>
+			<%}%>
           </form>
         </div>
       </div>

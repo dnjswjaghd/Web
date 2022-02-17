@@ -122,7 +122,6 @@
               <i class="bi bi-person-fill"></i>
               로그아웃
             </button>
-			<%}%>
             <button
               class="btn btn-outline-dark"
               type="button"
@@ -132,7 +131,6 @@
               찜
               <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
             </button>
-            <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
             <button
               class="btn btn-outline-danger"
               type="button"
@@ -141,6 +139,8 @@
               <i class="bi bi-people-fill"></i>
               모임 만들기
             </button>
+			<%}%>
+            <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
           </form>
         </div>
       </div>

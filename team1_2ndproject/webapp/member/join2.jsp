@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+    pageEncoding="utf-8" import ="java.sql.*, java.util.ArrayList,team1.togather.domain.*,team1.togather.model.BoardService"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -73,105 +73,12 @@
       }
       </script>
 	<body onload="document.joinform.mname.focus()">
+	<div class="wrapper">
   <body>
-    <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-light bg-gray">
-      <div class="container px-4 px-lg-5">
-        <h1 class="logo">
-          <a href=""
-            ><img src="../imgs/topLogo.png" alt="ToGather" title="홈으로 이동"
-          /></a>
-        </h1>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-            <li class="nav-item">
-              <a
-                class="nav-link active"
-                aria-current="page"
-                href=""
-                >ToGather란?</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="">공지사항</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                id="navbarDropdown"
-                href=""
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                >자주하는 질문</a
-              >
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li>
-                  <a class="dropdown-item" href="">FAQ</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="">Q&A</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <!-- 로그인시 보이게하기
-            <button class="btn btn-outline-success" type="button" onclick="location.href='logout.html'">
-              <i class="bi bi-person-check-fill"></i>
-              로그아웃
-            </button>
-          -->
-            <button
-              class="btn btn-outline-dark"
-              type="button"
-              onclick="location.href=''"
-            >
-              <i class="bi bi-person-fill"></i>
-              로그인
-            </button>
-            <button
-              class="btn btn-outline-primary"
-              type="button"
-              onclick="location.href=''"
-            >
-              <i class="bi bi-person-plus-fill"></i>
-              회원가입
-            </button>
-            <button
-              class="btn btn-outline-dark"
-              type="button"
-              onclick="location.href=''"
-            >
-              <i class="bi-cart-fill me-1"></i>
-              찜
-              <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-            </button>
-            <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
-            <button
-              class="btn btn-outline-danger"
-              type="button"
-              onclick="location.href=''"
-            >
-              <i class="bi bi-people-fill"></i>
-              모임 만들기
-            </button>
-          </form>
-        </div>
-      </div>
-    </nav>
-    <section class="vh-100" style="background-color: #eee">
+    <% BoardService service = BoardService.getInstance(); 
+    ArrayList<String> cateList = service.getCategoryS();
+    %>
+    <section class="vh-100" style="background-color: #eee; flex: 1">
       <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-lg-12 col-xl-11">
@@ -187,17 +94,17 @@
 					<input type="hidden" name="email">
 					<input type="hidden" name="birthday">
 				</form>
+				<div class="content-center text-center">
                       <button
                         type="button"
-                        class="btn btn-warning btn-lg btn-block mt-0 mb-0"
+                        class="btn btn-warning btn-lg btn-block mt-0 mb-0 content-center"
                         onclick="location.href='javascript:kakaojoin()'">
                         <i class="bi bi-chat-fill"></i>
                         카카오톡 계정으로 회원가입
                       </button>
-                    </p>
-                    <p class="divider-text mt-2 mb-2">
-                      <span class="bg-light">OR</span>
-                    </p>
+                      </div>
+                      <br/><br/>
+                      
                     <p class="text-center h2 fw-bold mb-1 mx-1 mx-md-4 mt-3">
                       회원가입
                     </p>
@@ -230,6 +137,7 @@
                           />
                         </div>
                       </div>
+                      
                       <div class="d-flex flex-row align-items-center mb-0">
                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                         <div class="form-outline flex-fill mb-2">
@@ -259,19 +167,29 @@
                       <div class="d-flex flex-row align-items-center mb-0">
                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                         <div class="form-outline flex-fill mb-2">
-                          <label
-                            class="form-label mb-0"
-                            for="form3Example4c"
-                            style="display: block"
-                            >전화번호</label>
-                          <div class="list-inline-item">
-                            <input
-                              type="tell" name="phone"
-                              maxlength="11"
-                              id="form3Example4c"
-                              class="form-control-join-phone"
-                              style="width: 255px"/>
-                          </div>
+                          <label class="form-label mb-0" for="form3Example4c"
+                            >이메일</label
+                          >
+                          <input
+                            type="text" name="email"
+                            id="form3Example4c"
+                            class="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div class="d-flex flex-row align-items-center mb-0">
+                        <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                        <div class="form-outline flex-fill mb-2">
+                          <label class="form-label mb-0" for="form3Example4c"
+                            >전화번호</label
+                          >
+                          <input
+                            type="text" name="phone"
+                            maxlength="11"
+                            id="form3Example4c"
+                            class="form-control"
+                            required
+                          />
                         </div>
                       </div>
 
@@ -282,10 +200,18 @@
                             >거주지</label
                           >
                           <select class="form-control" name="maddr">
-                            <option>선택</option>
+                            <option disabled>선택</option>
                             <option value="서울">서울</option>
                             <option value="경기">경기</option>
                             <option value="인천">인천</option>
+                            <option value="강원">강원</option>
+                            <option value="전북">전북</option>
+                            <option value="전남">전남</option>
+                            <option value="경북">경북</option>
+                            <option value="경남">경남</option>
+                            <option value="충북">충북</option>
+                            <option value="충남">충남</option>
+                            <option value="제주">제주</option>
                           </select>
                         </div>
                       </div>
@@ -297,10 +223,18 @@
                             >관심지역</label
                           >
                           <select class="form-control" name="pfrloc">
-                            <option>선택</option>
+                            <option disabled>선택</option>
                             <option value="서울">서울</option>
                             <option value="경기">경기</option>
                             <option value="인천">인천</option>
+                            <option value="강원">강원</option>
+                            <option value="전북">전북</option>
+                            <option value="전남">전남</option>
+                            <option value="경북">경북</option>
+                            <option value="경남">경남</option>
+                            <option value="충북">충북</option>
+                            <option value="충남">충남</option>
+                            <option value="제주">제주</option>
                           </select>
                         </div>
                       </div>
@@ -311,12 +245,10 @@
                           		<label class="form-label mb-0" for="form3Example4cd">
                           			관심사</label>
                           			<select class="form-control" name="category">
-                           			<option>선택</option>
-                            		<option value="음악">음악</option>
-                            		<option value="게임">게임</option>
-                            		<option value="여행">여행</option>
-                            		<option value="요리">요리</option>
-                            		<option value="직무">직무</option>
+                           			<option value="none">선택</option>
+                            		<% for(String cl: cateList){ %>
+                            		<option value="<%=cl%>"><%=cl%></option>
+                            		<%} %>
                            			</select>
                         	</div>
                       </div>
@@ -410,6 +342,7 @@
       </p>
     </div>
   </footer>
+  </div>
   <!-- Bootstrap core JS-->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Core theme JS-->

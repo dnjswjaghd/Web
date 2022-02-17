@@ -30,7 +30,7 @@
     <meta name="author" content="" />
     <title>모임 수정</title>
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/ToGather.ico" />
+    <link rel="icon" type="image/x-icon" href="../assets/ToGather.ico" />
     <!-- Bootstrap icons-->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
@@ -45,7 +45,7 @@
     <script src="../js/splitting.js"></script>
     <script src="../js/typed.js"></script>
   </head>
-  <script >
+   <script >
        function f_login()
        {
            baby_login = window.open(
@@ -53,7 +53,19 @@
                 "width=600, height=900, top=100, left=100");
        }
     </script>
-  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+
+
+<script>
+       function f_join()
+       {
+           baby_login = window.open(
+           "../member/join2.jsp", "join2_name", 
+                "width=1000, height=1100, top=100, left=100");
+       }
+    </script>
+
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
       <script>
       Kakao.init('11400a9267d93835389eb9255fcaad0b');
       function signout(){
@@ -68,7 +80,7 @@
         }
       }
       </script>
- <body onload="input.gName.focus()">
+ <body onload="input.name.focus()">
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light bg-gray">
       <div class="container px-4 px-lg-5">
@@ -101,7 +113,6 @@
             <li class="nav-item">
               <a class="nav-link" href="../customer/notice.jsp">공지사항</a>
             </li>
-            
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -123,7 +134,8 @@
             </li>
           </ul>
           <form class="d-flex">
-             <% 
+          
+ <% 
             String userid=(String)session.getAttribute("userid");
             if(userid==null){    
             %>
@@ -135,12 +147,20 @@
               <i class="bi bi-person-fill"></i>
               로그인
             </button>
-			<% }else {%>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              onclick="location.href='javascript:f_join()'"
+            >
+              <i class="bi bi-person-plus-fill"></i>
+              회원가입
+            </button>
+            <% }else {%>
             <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
               <i class="bi bi-person-fill"></i>
               로그아웃
             </button>
-			<%}%>
+<%}%>
             <button
               class="btn btn-outline-dark"
               type="button"
@@ -154,7 +174,7 @@
             <button
               class="btn btn-outline-danger"
               type="button"
-              onclick="location.href='groupTab.do?m=groupInput'"
+              onclick="location.href='../group/groupTab.do?m=groupInput&userid=<%=userid %>'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
@@ -178,7 +198,7 @@
 	                    <p class="text-center h2 fw-bold mb-1 mx-1 mx-md-4 mt-3">
 	                      모임 수정
 	                    </p>
-	                    <form name="input" class="mx-1 mx-md-4" method="post" action="groupTab.do?m=groupUpdate&gSeq=${groupTab.gSeq}">
+	                    <form class="mx-1 mx-md-4" method="post" action="groupTab.do?m=groupUpdate&gSeq=${groupTab.gSeq}" enctype="multipart/form-data">
 	                      <div class="d-flex flex-row align-items-center mb-0">
 	                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
 	                        <div class="form-outline flex-fill mb-2">
@@ -202,10 +222,18 @@
 	                            >지역</label
 	                          >
 	                          <select class="form-control" name="gLoc">
-	                            <option>선택</option>
+	                            <option disabled>선택</option>
 	                            <option>서울</option>
-	                            <option>경기</option>
-	                            <option>인천</option>
+								<option>경기</option>
+								<option>인천</option>
+								<option>강원</option>
+								<option>전북</option>
+								<option>전남</option>
+								<option>충북</option>
+								<option>충남</option>
+								<option>경북</option>
+								<option>경남</option>
+								<option>제주</option>
 	                          </select>
 	                        </div>
 	                      </div>
@@ -275,9 +303,10 @@
 	                          >
 	                          <input
 	                            type="file"
-	                            name="gFile"
+	                            name="fname"
 	                            id="form3Example4c"
 	                            class="form-control"
+	                            required
 	                          />
 	                        </div>
 	                      </div>

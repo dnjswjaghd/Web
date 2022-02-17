@@ -174,7 +174,7 @@
             <button
               class="btn btn-outline-danger"
               type="button"
-              onclick="location.href='groupTab.do?m=groupInput'"
+              onclick="location.href='../group/groupTab.do?m=groupInput&userid=<%=userid %>'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기

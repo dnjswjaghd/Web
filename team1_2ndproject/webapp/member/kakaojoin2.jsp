@@ -97,12 +97,7 @@
             </li>
           </ul>
           <form class="d-flex">
-            <!-- 로그인시 보이게하기
-            <button class="btn btn-outline-success" type="button" onclick="location.href='logout.html'">
-              <i class="bi bi-person-check-fill"></i>
-              로그아웃
-            </button>
-          -->
+            
             <button
               class="btn btn-outline-dark"
               type="button"
@@ -150,7 +145,6 @@
                 <div class="row justify-content-center">
                   <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
                     <p class="text-center h1 fw-bold mb-3 mx-1 mx-md-4 mt-2">
-                   
                     </p>
                     <p class="divider-text mt-2 mb-2">
                       <span class="bg-light">OR</span>
@@ -159,7 +153,7 @@
                       회원가입
                     </p>
                     <!--거주지/관심지역/이름/생년월일/비번/비번확인/전화번호/성별-->
-                    <form name="kakaojoinform" action="login.do?m=kakaojoin&mname=${mname}&email=${email}" method="post">
+                    <form name="kakaojoinform" action="login.do?m=kakaojoin&mname=${param.mname}&email=${param.email}" method="post">
                       <div class="d-flex flex-row align-items-center mb-0">
                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                         <div class="form-outline flex-fill mb-2">
@@ -170,7 +164,7 @@
                           <input
                             type="text" name="mname"
                             id="form3Example1c"
-                            class="form-control"  value="${mname}" required/>
+                            class="form-control"   required/>
                         </div>
                       </div>
 
@@ -223,7 +217,7 @@
                             >전화번호</label>
                           <div class="list-inline-item">
                             <input
-                              type="tell" name="phone"
+                              type="tel" name="phone"
                               maxlength="11"
                               id="form3Example4c"
                               class="form-control-join-phone"

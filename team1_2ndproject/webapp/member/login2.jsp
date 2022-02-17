@@ -40,10 +40,8 @@
                     success:res => {
                         const kakao_account =res.kakao_account;
                         console.log(kakao_account);
-                        kakaologin.mname.value = res.properties['nickname'];
-                        
+                        kakaologin.mname.value = res.properties['nickname'];      
                         kakaologin.email.value = res.kakao_account.email;
-                       
                         kakaologin.gender.value = res.kakao_account.gender;
                         kakaologin.birthday.value = res.kakao_account.birthday;
                       alert(res.kakao_account.email + ' (' + res.properties['nickname'] + ') 님 환영합니다.');

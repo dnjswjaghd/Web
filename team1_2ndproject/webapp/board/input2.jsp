@@ -223,14 +223,15 @@
                           <label class="form-label mb-0" for="form3Example1c"
                             >카테고리</label
                           >
-                          <input
-                            type="text"
-							name='bcategory'  
-							value='${board.bcategory}'
-                            maxlength="12"
+                          <select name="bcategory" 
                             id="form3Example1c"
-                            class="form-control"
-                          />
+                            class="form-control">
+                           <% ArrayList<String> cateList = (ArrayList<String>)request.getAttribute("cateList");
+                        		for(String cl: cateList){
+                        	%>
+								<option value="<%=cl%>"><%=cl%></option>
+						 <%} %>
+                         </select>
                         </div>
                       </div>
                       <div class="d-flex flex-row align-items-center mb-0">

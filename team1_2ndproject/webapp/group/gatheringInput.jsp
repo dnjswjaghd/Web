@@ -131,12 +131,6 @@
               <i class="bi bi-person-fill"></i>
               로그인
             </button>
-            <% }else {%>
-            <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
-              <i class="bi bi-person-fill"></i>
-              로그아웃
-            </button>
-			<%}%>
             <button
               class="btn btn-outline-primary"
               type="button"
@@ -145,10 +139,17 @@
               <i class="bi bi-person-plus-fill"></i>
               회원가입
             </button>
+            <% }else {%>
+            <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
+              <i class="bi bi-person-fill"></i>
+              로그아웃
+            </button>
+			<%}%>
+            
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='wish.html'"
+              onclick="location.href='../customer/wish.jsp'"
             >
               <i class="bi-cart-fill me-1"></i>
               찜
@@ -158,7 +159,7 @@
             <button
               class="btn btn-outline-danger"
               type="button"
-              onclick="location.href='groupTab.do?m=groupInput'"
+              onclick="location.href='../group/groupTab.do?m=groupInput&userid=<%=userid %>'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
@@ -217,6 +218,7 @@
                             name="ga_date"
                             id="form3Example3c"
                             class="form-control"
+                            value="2022-02-16"
                           />
                         </div>
                       </div>
@@ -231,6 +233,7 @@
                             name="time"
                             id="form3Example4c"
                             class="form-control"
+                            
                           />
                         </div>
                       </div>
@@ -285,6 +288,7 @@
                             max="20"
                             placeholder="2~20"
                             class="form-control"
+                            required
                           />
                         </div>
                       </div>

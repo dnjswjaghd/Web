@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=utf-8" import="java.sql.*"%>
+<%@ page contentType="text/html;charset=utf-8" import="java.sql.*, java.util.ArrayList"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +13,8 @@
 	    		  document.input.gIntro.value == "" || 
 	    		  document.input.gAddr.value == "" ||
 	    		  document.input.time.value == "" ||
-	    		  document.input.limit.value == "")
+	    		  document.input.limit.value == "" ||
+	    		  document.input.fname.value == "")
 			  {
 			     alert("필수입력란이 비었습니다.");
 			     return false;
@@ -60,10 +61,11 @@
        {
            baby_login = window.open(
            "../member/join2.jsp", "join2_name", 
-                "width=600, height=1100, top=100, left=100");
+                "width=1000, height=1100, top=100, left=100");
        }
     </script>
-  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
       <script>
       Kakao.init('11400a9267d93835389eb9255fcaad0b');
       function signout(){
@@ -78,7 +80,7 @@
         }
       }
       </script>
- <body onload="input.gName.focus()">
+ <body onload="input.name.focus()">
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light bg-gray">
       <div class="container px-4 px-lg-5">
@@ -132,9 +134,7 @@
             </li>
           </ul>
           <form class="d-flex">
-            
-          
- 			<% 
+            <% 
             String userid=(String)session.getAttribute("userid");
             if(userid==null){    
             %>
@@ -146,13 +146,6 @@
               <i class="bi bi-person-fill"></i>
               로그인
             </button>
-            
-			<%}else {%>
-            <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
-              <i class="bi bi-person-fill"></i>
-              로그아웃
-            </button>
-            <%}%>
             <button
               class="btn btn-outline-primary"
               type="button"
@@ -161,6 +154,12 @@
               <i class="bi bi-person-plus-fill"></i>
               회원가입
             </button>
+            <% }else {%>
+            <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
+              <i class="bi bi-person-fill"></i>
+              로그아웃
+            </button>
+<%}%>
             <button
               class="btn btn-outline-dark"
               type="button"
@@ -174,7 +173,7 @@
             <button
               class="btn btn-outline-danger"
               type="button"
-              onclick="location.href='groupTab.do?m=groupInput'"
+              onclick="location.href='../group/groupTab.do?m=groupInput&userid=<%=userid %>'"
             >
               <i class="bi bi-people-fill"></i>
               모임 만들기
@@ -197,7 +196,7 @@
                     <p class="text-center h2 fw-bold mb-1 mx-1 mx-md-4 mt-3">
                       모임 만들기
                     </p>
-                    <form name="input" class="mx-1 mx-md-4" method="post" action="groupTab.do?m=groupInsert">
+                    <form class="mx-1 mx-md-4" method="post" action="groupTab.do?m=groupInsert" enctype="multipart/form-data">
                       <div class="d-flex flex-row align-items-center mb-0">
                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                         <div class="form-outline flex-fill mb-2">
@@ -220,10 +219,17 @@
                             >지역</label
                           >
                           <select class="form-control" name="gLoc">
-                            <option>선택</option>
                             <option>서울</option>
-                            <option>경기</option>
-                            <option>인천</option>
+							<option>경기</option>
+							<option>인천</option>
+							<option>강원</option>
+							<option>전북</option>
+							<option>전남</option>
+							<option>충북</option>
+							<option>충남</option>
+							<option>경북</option>
+							<option>경남</option>
+							<option>제주</option>
                           </select>
                         </div>
                       </div>
@@ -235,18 +241,11 @@
                             >관심사</label
                           >
                           <select class="form-control" name="interest">
-                            <option>선택</option>
-                            <option>아웃도어</option>
-                            <option>운동</option>
-                            <option>인문학</option>
-                            <option>업종</option>
-                            <option>언어</option>
-                            <option>문학</option>
-                            <option>음악</option>
-                            <option>공예</option>
-                            <option>댄스</option>
-                            <option>봉사활동</option>
-                            <option>자유주제</option>
+                            <% ArrayList<String> cateList = (ArrayList<String>)request.getAttribute("cateList");
+                        		for(String cl : cateList){
+                        	%>
+                            <option value = "<%=cl%>"><%=cl%></option>
+                          <%} %>
                           </select>
                         </div>
                       </div>
@@ -292,9 +291,11 @@
                           >
                           <input
                             type="file"
-                            name="gFile"
+                            name="fname"
                             id="form3Example4c"
                             class="form-control"
+                            accept="image/*"
+                            required
                           />
                         </div>
                       </div>

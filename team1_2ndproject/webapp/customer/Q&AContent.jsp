@@ -122,24 +122,21 @@
             <button
               class="btn btn-outline-dark"
               type="button"
-              onclick="location.href='javascript:f_login()'"
-            >
+              onclick="location.href='javascript:f_login()'">
               <i class="bi bi-person-fill"></i>
               로그인
+            </button>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              onclick="location.href='javascript:f_join()'">
+              <i class="bi bi-person-plus-fill"></i>
+              회원가입
             </button>
             <% }else {%>
             <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
               <i class="bi bi-person-fill"></i>
               로그아웃
-            </button>
-<%}%>
-            <button
-              class="btn btn-outline-primary"
-              type="button"
-              onclick="location.href='javascript:f_join()'"
-            >
-              <i class="bi bi-person-plus-fill"></i>
-              회원가입
             </button>
             <button
               class="btn btn-outline-dark"
@@ -150,7 +147,6 @@
               찜
               <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
             </button>
-            <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
             <button
               class="btn btn-outline-danger"
               type="button"
@@ -159,6 +155,7 @@
               <i class="bi bi-people-fill"></i>
               모임 만들기
             </button>
+			<%}%>
           </form>
         </div>
       </div>
@@ -167,24 +164,24 @@
     <section class="vh-100" style="background-color: #eee">
       <div class="container h-75 contents-center">
         <div class="row justify-content-center align-items-center h-75">
-            <div class="col-lg-3"></div>
-            <div class="col-lg-6 h-50">
-              <table class="table table-bordered">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-8 h-50">
+              <table class="table table-bordered" style="background-color: white">
                 <thead class="table-warning text-center">
                   <tr>
                     <th scope="col" colspan="7">Q & A</th>
                   </tr>
                 <tbody>
                   <tr class="text-center">
-                    <th scope="col" name="ntName" class="table-secondary">글제목</th>
+                    <th scope="col" name="ntName" class="table-light">글제목</th>
                     <td colspan="6">2월 14일 발렌타인데이 이벤트</td>   
                   </tr>
                   <tr class="text-center">
-                    <th scope="row" class="table-secondary" >작성자</th>
+                    <th scope="row" class="table-light" >작성자</th>
                     <td colspan="6">운영자</td>
                   </tr>
                   <tr>
-                    <th scope="row" colspan="7" style="text-align: center;" class="table-secondary">글내용</th>
+                    <th scope="row" colspan="7" style="text-align: center;" class="table-light">글내용</th>
                   </tr>
                   <tr>
                     <td colspan="7" style="line-height: 70px; min-height: 70px; height: 200px;" >가나다라마바사가나다라마바사가나다라마바사
@@ -193,7 +190,7 @@
                 </tbody>
                   <tfoot>
                   <tr>
-                    <th scope="row" colspan="7" style="text-align: center;" class="table-secondary">댓글</th>
+                    <th scope="row" colspan="7" style="text-align: center;" class="table-light">댓글</th>
                   </tr>
                   <tr class="text-center">
                     <td>작성자</td>
@@ -242,7 +239,7 @@
 
               </div>
             </div>  
-            <div class="col-lg-3"></div>
+            <div class="col-lg-2"></div>
         </div>
     </section>
 

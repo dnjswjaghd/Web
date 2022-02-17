@@ -29,12 +29,12 @@
   </head>
 
   <div class="wrapper">
-    <body>
+    <body style="background-color: #eee">
       <!-- Navigation-->
       <nav class="navbar navbar-expand-lg navbar-light bg-gray">
         <div class="container px-4 px-lg-5">
           <h1 class="logo">
-            <a href="index.html"
+            <a href="../"
               ><img src="../imgs/topLogo.png" alt="ToGather" title="홈으로 이동"
             /></a>
           </h1>
@@ -83,47 +83,48 @@
               </li>
             </ul>
             <form class="d-flex">
-              <!-- 로그인시 보이게하기
-                <button class="btn btn-outline-success" type="button" onclick="location.href='logout.html'">
-                  <i class="bi bi-person-check-fill"></i>
-                  로그아웃
-                </button>
-              -->
-              <button
-                class="btn btn-outline-dark"
-                type="button"
-                onclick="location.href='login.html'"
-              >
-                <i class="bi bi-person-fill"></i>
-                로그인
-              </button>
-              <button
-                class="btn btn-outline-primary"
-                type="button"
-                onclick="location.href='join.html'"
-              >
-                <i class="bi bi-person-plus-fill"></i>
-                회원가입
-              </button>
-              <button
-                class="btn btn-outline-dark"
-                type="button"
-                onclick="location.href='wish.html'"
-              >
-                <i class="bi-cart-fill me-1"></i>
-                찜
-                <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-              </button>
-              <!--회원전용 메뉴. 비로그인시 로그인먼저 하도록 alert 띄우기-->
-              <button
-                class="btn btn-outline-danger"
-                type="button"
-                onclick="location.href='groupCreate.html'"
-              >
-                <i class="bi bi-people-fill"></i>
-                모임 만들기
-              </button>
-            </form>
+            <% 
+            String userid=(String)session.getAttribute("userid");
+            if(userid==null){    
+            %>
+            <button
+              class="btn btn-outline-dark"
+              type="button"
+              onclick="location.href='javascript:f_login()'">
+              <i class="bi bi-person-fill"></i>
+              로그인
+            </button>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              onclick="location.href='javascript:f_join()'">
+              <i class="bi bi-person-plus-fill"></i>
+              회원가입
+            </button>
+            <% }else {%>
+            <button id = "logout" class="btn btn-outline-dark" style="margin-right:10px"type="button" onclick="location.href='javascript:signout()'">
+              <i class="bi bi-person-fill"></i>
+              로그아웃
+            </button>
+            <button
+              class="btn btn-outline-dark"
+              type="button"
+              onclick="location.href='#'"
+            >
+              <i class="bi-cart-fill me-1"></i>
+              찜
+              <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+            </button>
+            <button
+              class="btn btn-outline-danger"
+              type="button"
+              onclick="location.href='../group/groupInput.jsp'"
+            >
+              <i class="bi bi-people-fill"></i>
+              모임 만들기
+            </button>
+			<%}%>
+          </form>
           </div>
         </div>
       </nav>
@@ -156,7 +157,7 @@
                     <div class="col mb-5">
                       <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" src="../imgs/hobby1.jpg" alt="..." />
+                        <img class="card-img-top" src="../store/<%=gl.getFname()%>" alt="..." />
                         <!-- Product details-->
                         <div class="card-body p-4">
                           <div class="text-center">

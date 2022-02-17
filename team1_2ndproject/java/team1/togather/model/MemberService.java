@@ -30,4 +30,5 @@ public class MemberService {
 		Member m =dao.kakaologincheck(email);
 		return m;	
 	}
+	
 }

@@ -172,7 +172,13 @@ public class BoardController extends HttpServlet {
 		response.sendRedirect("board.do?m=list");
 	}
 	private void input(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.sendRedirect("input2.jsp");
+		BoardService service = BoardService.getInstance();
+		ArrayList<String> cateList = service.getCategoryS();
+		
+		request.setAttribute("cateList", cateList);
+		//response.sendRedirect("input2.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("input2.jsp");
+		rd.forward(request, response);
 	}
 	private void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BoardService service = BoardService.getInstance();

@@ -62,6 +62,26 @@ public class BoardDAO {
            }catch(SQLException se){}
         }
 	}
+	ArrayList<String> getCategory() {
+		ArrayList<String> cateList = new ArrayList<>();
+		Statement stmt = null;
+		Connection con = null;
+		ResultSet rs = null;
+		String sql = "select THEME from CATEGORY order by CATENUM";
+		try {
+			con = ds.getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				String theme = rs.getString(1);
+				cateList.add(theme);
+			}
+			return cateList;
+		}catch(SQLException se) {
+			se.printStackTrace();
+		}
+		return cateList;
+	}
 	ArrayList<Board> blist(int pageAt, int ps){
 		ArrayList<Board> list = new ArrayList<>();
 		PreparedStatement pstmt = null;

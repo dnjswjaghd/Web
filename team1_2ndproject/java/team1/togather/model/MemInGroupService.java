@@ -17,6 +17,12 @@ public class MemInGroupService {
 	public boolean MemInGroupJoinS(MemInGroup dto) {
 		return dao.MemInGroupJoin(dto);
 	}
+	public boolean MemInGroupDelS(long gSeq, long mnum) {
+		return dao.MemInGroupDel(gSeq, mnum);
+	}
+	public boolean MemInGroupDelS(long gSeq) {
+		return dao.MemInGroupDel(gSeq);
+	}
 }
 
 

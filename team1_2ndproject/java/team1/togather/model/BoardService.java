@@ -15,6 +15,9 @@ public class BoardService {
 	public ArrayList<Board> blistS(){
 		return dao.blist();
 	}
+	public ArrayList<String> getCategoryS() {
+		return dao.getCategory();
+	}
 	public ArrayList<Board> blistS(int pageAt, int ps){
 		return dao.blist(pageAt, ps);
 	}

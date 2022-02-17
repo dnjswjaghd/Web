@@ -1,5 +1,6 @@
 package team1.togather.control;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -12,11 +13,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+import com.oreilly.servlet.multipart.FileRenamePolicy;
+
+import team1.togather.domain.FileSet;
 import team1.togather.domain.Gathering;
 import team1.togather.domain.GroupTab;
+import team1.togather.domain.MemInGroup;
 import team1.togather.domain.Member;
 import team1.togather.domain.WishList;
+import team1.togather.model.BoardService;
 import team1.togather.model.GroupTabService;
+import team1.togather.model.MemInGroupService;
 
 @WebServlet("/group/groupTab.do")
 public class GroupTabController extends HttpServlet {
@@ -102,9 +111,12 @@ public class GroupTabController extends HttpServlet {
 		GroupTabService service = GroupTabService.getInstance();
 		ArrayList<GroupTab> groupList = service.groupListS();
 		request.setAttribute("groupList", groupList);
-		long usermnum = Long.parseLong(request.getParameter("usermnum"));
-		response.sendRedirect("../?usermnum="+usermnum+"");
+		
+		//String view = "groupList.jsp";
+		//RequestDispatcher rd = request.getRequestDispatcher(view);
+		//rd.forward(request, response);
 	}
+	
 	private void groupInfo(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		GroupTabService service = GroupTabService.getInstance();
@@ -116,13 +128,12 @@ public class GroupTabController extends HttpServlet {
 		
 		ArrayList<Gathering> gatheringList = service.gatheringListS(gSeq);
 		request.setAttribute("gatheringList", gatheringList);
+
 		System.out.println(gSeq);
 		
 		ArrayList<Member> MemInGroupList = service.MemInGroupListS(gSeq);
 		request.setAttribute("MemInGroupList", MemInGroupList);
-		//for(Member dto:MemInGroupList) {
-			//System.out.println(dto.getMname());
-		//}
+		
 		String view = "groupInfo.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(view);
 		rd.forward(request, response);
@@ -130,6 +141,9 @@ public class GroupTabController extends HttpServlet {
 	private void groupInput(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		String userid = (String)request.getParameter("userid");
+		BoardService service = BoardService.getInstance();
+		ArrayList<String> cateList = service.getCategoryS();
+		request.setAttribute("cateList", cateList);
 		System.out.println(userid);
 		if(userid.equals("null")) {
 			System.out.println("인풋안 ");
@@ -150,13 +164,37 @@ public class GroupTabController extends HttpServlet {
 	}
 	private void groupInsert(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		GroupTabService service = GroupTabService.getInstance();
-		String gLoc = request.getParameter("gLoc");
-		String gName = request.getParameter("gName");
-		String gIntro = request.getParameter("gIntro");
-		String interest = request.getParameter("interest");
-		int limit = getLimit(request);
-		GroupTab dto = new GroupTab(-1, gLoc, gName, gIntro, interest, limit, null, 1);
+		GroupTabService service = GroupTabService.getInstance();		
+		//파일 업로드
+		String saveDir = FileSet.FILE_DIR;
+		File fSaveDir = new File(saveDir);
+		if(!fSaveDir.exists()) fSaveDir.mkdirs(); //폴더 없으면 새로 생성
+		
+		int maxPostSize = 10*1024*1024;
+		FileRenamePolicy policy = new DefaultFileRenamePolicy();
+		MultipartRequest mr = null;
+		try {
+			mr = new MultipartRequest(request, saveDir, maxPostSize, "utf-8", policy);
+		}catch(IOException ie) {
+			System.out.println("파일 업로드 실패" + ie);
+		}
+		
+		String fname = mr.getFilesystemName("fname");
+		String ofname = mr.getOriginalFileName("fname");
+		System.out.println("업로드 파일 정보: fname: " + fname + ", ofname: " + ofname);
+		request.setAttribute("fname", fname);
+			
+    	HttpSession session = request.getSession(true);
+    	long mNum= (Long)session.getAttribute("usermnum");
+    	
+		//insert정보
+    	
+		String gLoc = mr.getParameter("gLoc");
+		String gName = mr.getParameter("gName");
+		String gIntro = mr.getParameter("gIntro");
+		String interest = mr.getParameter("interest");
+		int limit = Integer.parseInt(mr.getParameter("limit"));
+		GroupTab dto = new GroupTab(-1, gLoc, gName, gIntro, interest, limit, null, mNum, fname);
 		boolean groupInsert = service.groupInsertS(dto);
 		request.setAttribute("groupInsert", groupInsert);
 		
@@ -167,13 +205,39 @@ public class GroupTabController extends HttpServlet {
 	private void groupGetUpdate(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		GroupTabService service = GroupTabService.getInstance();
+		HttpSession session = request.getSession(true);
 		long gSeq = getgSeq(request);
-		ArrayList<GroupTab> groupGetUpdate = service.groupGetUpdateS(gSeq);
-		request.setAttribute("groupGetUpdate", groupGetUpdate);
-		
-		String view = "groupgetupdate.jsp";
-		RequestDispatcher rd = request.getRequestDispatcher(view);
-		rd.forward(request, response);	
+		long mNum=0;
+    	if((Long)session.getAttribute("usermnum")==null) {
+    		response.setContentType("text/html;charset=utf-8");
+			PrintWriter pw = response.getWriter();
+			pw.println("<script>");
+			pw.println("alert('로그인이 필요합니다')");
+			pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
+			pw.println("</script>");
+			pw.close();
+    	}else {
+    		mNum= (Long)session.getAttribute("usermnum");
+			ArrayList<GroupTab> groupGetUpdate = service.groupGetUpdateS(gSeq);
+			long listmnum=0;
+			for(GroupTab dto : groupGetUpdate) {
+				listmnum=dto.getmNum();
+			}
+			if(listmnum!=mNum) {
+				response.setContentType("text/html;charset=utf-8");
+				PrintWriter pw = response.getWriter();
+				pw.println("<script>");
+				pw.println("alert('모임장만 수정가능합니다')");
+				pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
+				pw.println("</script>");
+				pw.close(); 
+			}else {
+				request.setAttribute("groupGetUpdate", groupGetUpdate);
+				String view = "groupgetupdate.jsp";
+				RequestDispatcher rd = request.getRequestDispatcher(view);
+				rd.forward(request, response);	
+			}
+    	}
 	}
 	private void groupUpdate(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
@@ -182,14 +246,29 @@ public class GroupTabController extends HttpServlet {
 		long gSeq = Long.parseLong(request.getParameter("gSeq"));
 		//request.setAttribute("groupUpdate_gSeq", gSeq);
 		
-		String gLoc = request.getParameter("gLoc");
-		String gName = request.getParameter("gName");
-		String gIntro = request.getParameter("gIntro");
-		int limit = getLimit(request);
+		String saveDir = FileSet.FILE_DIR;
+		
+		int maxPostSize = 10*1024*1024;
+		FileRenamePolicy policy = new DefaultFileRenamePolicy();
+		MultipartRequest mr = null;
+		try {
+			mr = new MultipartRequest(request, saveDir, maxPostSize, "utf-8", policy);
+		}catch(IOException ie) {
+			System.out.println("파일 업로드 실패" + ie);
+		}
+		
+		String gLoc = mr.getParameter("gLoc");
+		String gName = mr.getParameter("gName");
+		String gIntro = mr.getParameter("gIntro");
+		int limit = Integer.parseInt(mr.getParameter("limit"));
+		String fname = mr.getFilesystemName("fname");
 			System.out.println("gSeq(Controller) groupUpdate: " + gSeq);
 			System.out.println("gName(Controller) groupUpdate: " + gName);
+			System.out.println("gIntro(Controller) groupUpdate: " + gIntro);
+			System.out.println("gLoc(Controller) groupUpdate: " + gLoc);
+			System.out.println("fname(Controller) groupUpdate: " + fname);
 		
-		GroupTab dto = new GroupTab(gSeq, gLoc, gName, gIntro, limit);
+		GroupTab dto = new GroupTab(gSeq, gLoc, gName, gIntro, limit, fname);
 		service.groupUpdateS(dto);
 		
 		response.sendRedirect("groupTab.do?m=groupInfo&gSeq=" + gSeq);
@@ -198,19 +277,80 @@ public class GroupTabController extends HttpServlet {
 			throws ServletException, IOException {
 		GroupTabService service = GroupTabService.getInstance();
 		long gSeq = Long.parseLong(request.getParameter("gSeq"));
-		service.groupDeleteS(gSeq);
-		long usermnum = Long.parseLong(request.getParameter("usermnum"));
-		
-		response.sendRedirect("groupTab.do?m=groupList&usermnum="+usermnum+"");
+		HttpSession session = request.getSession(true); 
+		long mNum=0;
+    	if((Long)session.getAttribute("usermnum")==null) {
+    		response.setContentType("text/html;charset=utf-8");
+			PrintWriter pw = response.getWriter();
+			pw.println("<script>");
+			pw.println("alert('로그인이 필요합니다')");
+			pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
+			pw.println("</script>");
+			pw.close();
+    	}else {
+    		mNum = (Long)session.getAttribute("usermnum");
+			ArrayList<GroupTab> groupGetUpdate = service.groupGetUpdateS(gSeq);
+			long listmnum=0;
+			for(GroupTab dto : groupGetUpdate) {
+				listmnum=dto.getmNum();
+			}
+			if(listmnum!=mNum) {
+				response.setContentType("text/html;charset=utf-8");
+				PrintWriter pw = response.getWriter();
+				pw.println("<script>");
+				pw.println("alert('모임장만 삭제가능합니다')");
+				pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
+				pw.println("</script>");
+				pw.close(); 
+			}else {
+				mNum= (Long)session.getAttribute("usermnum");
+		    	System.out.println("세션:"+(Long)session.getAttribute("usermnum"));
+		    	System.out.println("long:"+mNum);
+		    	MemInGroupService MemInservice = MemInGroupService.getInstance();
+		    	MemInservice.MemInGroupDelS(gSeq);
+				service.groupDeleteS(gSeq);		
+				response.sendRedirect("../");
+			}
+    	}
 	}
 	private void gatheringInput(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		long gSeq =Long.parseLong(request.getParameter("gSeq"));
-		request.setAttribute("gatheringInput_gSeq", gSeq);
-		String view = "gatheringInput.jsp";
-		//response.sendRedirect(view);
-		RequestDispatcher rd = request.getRequestDispatcher(view);
-		rd.forward(request, response);
+		GroupTabService service = GroupTabService.getInstance();
+		HttpSession session = request.getSession(true);
+		
+		long mnum=0;
+    	if((Long)session.getAttribute("usermnum")==null) {
+	    		response.setContentType("text/html;charset=utf-8");
+				PrintWriter pw = response.getWriter();
+				pw.println("<script>");
+				pw.println("alert('로그인이 필요합니다')");
+				pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
+				pw.println("</script>");
+				pw.close();
+    	}else {
+    			mnum = (Long)session.getAttribute("usermnum");
+				System.out.println("엠넘 : "+mnum);
+				ArrayList<MemInGroup> MemInGroupList2 = service.MemInGroupListS2(gSeq,mnum);
+				if(MemInGroupList2.size()==0) {
+					response.setContentType("text/html;charset=utf-8");
+					PrintWriter pw = response.getWriter();
+					pw.println("<script>");
+					pw.println("alert('모임에 가입한 사람만 가능합니다.')");
+					pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
+					pw.println("</script>");
+					pw.close();
+				}
+				else {
+					request.setAttribute("MemInGroupList2", MemInGroupList2);	
+					request.setAttribute("gatheringInput_gSeq", gSeq);
+					String view = "gatheringInput.jsp";
+					//response.sendRedirect(view);
+					RequestDispatcher rd = request.getRequestDispatcher(view);
+					rd.forward(request, response);
+				}
+    	}
+		
 	}
 	private void gatheringInsert(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
@@ -271,11 +411,14 @@ public class GroupTabController extends HttpServlet {
 	private void gatheringDelete(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		GroupTabService service = GroupTabService.getInstance();
+		long gSeq = Long.parseLong(request.getParameter("gSeq"));
+		//System.out.println("C_gatheringDelete의 gSeq: " + gSeq);
 		long ga_seq = getGa_seq(request);
+		//System.out.println("C_gatheringDelete의 ga_seq: " + ga_seq);
 		service.gatheringDeleteS(ga_seq);
 		
-		response.sendRedirect("groupTab.do?m=groupList"); //정모목록으로 가게끔 수정
-		//String view = "groupList.jsp";
+		response.sendRedirect("groupTab.do?m=groupInfo&gSeq=" + gSeq); 
+		//String view = "groupInfo.jsp";
 		//RequestDispatcher rd = request.getRequestDispatcher(view);
 		//rd.forward(request, response);
 	}
@@ -331,21 +474,6 @@ public class GroupTabController extends HttpServlet {
 		}
 		return seq;
 	}
-	private int getLimit(HttpServletRequest request){
-		int limit = -1;
-		String limitStr = request.getParameter("limit");
-		if(limitStr != null){
-			limitStr = limitStr.trim();
-			if(limitStr.length() != 0){
-				try{
-					limit = Integer.parseInt(limitStr);
-					return limit;
-				}catch(NumberFormatException nfe){
-				}
-			}
-		}
-		return limit;
-	}
 	private int getGa_Limit(HttpServletRequest request){
 		int ga_limit = -1;
 		String ga_limitStr = request.getParameter("ga_limit");
@@ -378,3 +506,4 @@ public class GroupTabController extends HttpServlet {
 		return ga_seq;
 	}
 }
+

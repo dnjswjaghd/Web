@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import team1.togather.domain.Gathering;
 import team1.togather.domain.GroupTab;
+import team1.togather.domain.MemInGroup;
 import team1.togather.domain.Member;
 import team1.togather.domain.WishList;
 
@@ -38,11 +39,14 @@ public class GroupTabService {
 	public GroupTab getGroupS(long gSeq) {
 		return dao.getGroup(gSeq);
 	}
-	public ArrayList<GroupTab> groupInfoS(long gSeq){
+	public ArrayList<GroupTab> groupInfoS(long gSeq){ 
 		return dao.groupInfo(gSeq);
 	}
 	public ArrayList<Member> MemInGroupListS(long gSeq){
 		return dao.MemInGroupList(gSeq);
+	}
+	public ArrayList<MemInGroup> MemInGroupListS2(long gseq,long mnum){
+		return dao.MemInGroupList2(gseq,mnum);
 	}
 	public boolean groupInsertS(GroupTab dto) {
 		return dao.groupInsert(dto);
@@ -56,9 +60,14 @@ public class GroupTabService {
 	public void groupDeleteS(long gSeq) {
 		dao.groupDelete(gSeq);
 	}
+	public void wishDelS(long usermnum, long gseq) {
+		dao.wishDel(usermnum, gseq);
+	}
+	/*
 	public ArrayList<GroupTab> getGroupByMnum(long mnum){
 		return dao.getGroupByMnum(mnum);
 	}
+	*/
 	
 	public boolean gatheringInsertS(Gathering dto) {
 		return dao.gatheringInsert(dto);
@@ -78,7 +87,5 @@ public class GroupTabService {
 	public void gatheringUpdateS(Gathering dto) {
 		dao.gatheringUpdate(dto);
 	}
-	public void wishDelS(long usermnum, long gseq) {
-		dao.wishDel(usermnum, gseq);
-	}
+
 }

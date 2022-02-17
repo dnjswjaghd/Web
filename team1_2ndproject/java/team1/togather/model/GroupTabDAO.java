@@ -150,7 +150,8 @@ class GroupTabDAO {
 				int limit = rs.getInt(6);
 				Date rdate = rs.getDate(7);
 				long mNum = rs.getLong(8);				
-				gt = new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum);
+				String fname = rs.getString(9);
+				gt = new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum, fname);
 			}
 			return gt;
 		}catch(SQLException se) {
@@ -181,8 +182,9 @@ class GroupTabDAO {
 				String interest = rs.getString(5);
 				int limit = rs.getInt(6);
 				Date rdate = rs.getDate(7);
-				long mNum = rs.getLong(8);				
-				groupInfo.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum));
+				long mNum = rs.getLong(8);
+				String fname = rs.getString(9);
+				groupInfo.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum, fname));
 			}
 			return groupInfo;
 		}catch(SQLException se) {
@@ -214,6 +216,34 @@ class GroupTabDAO {
 			}catch(SQLException se) {}
 		}
 	}
+	ArrayList<MemInGroup> MemInGroupList2(long gseq,long mnum) {
+		ArrayList<MemInGroup> MemInGroupList2 = new ArrayList<MemInGroup>();
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select mnum from member where mnum in(select mnum from MEM_IN_GROUP where gseq=? and mnum=?)";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setLong(1,gseq);
+			pstmt.setLong(2,mnum);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				long mNum = rs.getLong(1);		
+				MemInGroupList2.add(new MemInGroup(-1,mNum,-1));
+			}
+			return MemInGroupList2;
+		}catch(SQLException se) {
+			System.out.println(se);
+			return null;
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(con != null) con.close();
+			}catch(SQLException se) {}
+		}
+	}
 	ArrayList<GroupTab> groupList(){
 		ArrayList<GroupTab> groupList = new ArrayList<GroupTab>();
 		Connection con = null;
@@ -232,7 +262,8 @@ class GroupTabDAO {
 				int limit = rs.getInt(6);
 				Date rdate = rs.getDate(7);
 				long mNum = rs.getLong(8);				
-				groupList.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum));
+				String fname = rs.getString(9);
+				groupList.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum, fname));
 			}
 			return groupList;
 		}catch(SQLException se) {
@@ -250,7 +281,6 @@ class GroupTabDAO {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		GroupTab gt = null;
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(GROUP_SELECT);
@@ -264,7 +294,8 @@ class GroupTabDAO {
 				int limit = rs.getInt(6);
 				Date rdate = rs.getDate(7);
 				long mNum = rs.getLong(8);				
-				groupInfo.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum));
+				String fname = rs.getString(9);
+				groupInfo.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum, fname));
 			}
 			return groupInfo;
 		}catch(SQLException se) {
@@ -310,13 +341,14 @@ class GroupTabDAO {
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(GROUP_INSERT);
-			//"insert into GROUPTAB values(GROUP_SEQ.nextval, ?, ?, ?, ?, ?, SYSDATE, ?)"
+			//"insert into GROUPTAB values(GROUP_SEQ.nextval, ?, ?, ?, ?, ?, SYSDATE, ?, ?)"
 			pstmt.setString(1, dto.getgLoc());
 			pstmt.setString(2, dto.getgName());
 			pstmt.setString(3, dto.getgIntro());
 			pstmt.setString(4, dto.getInterest());
 			pstmt.setInt(5, dto.getLimit());
-			pstmt.setLong(6, 1); //mNum session
+			pstmt.setLong(6, dto.getmNum()); //mNum session
+			pstmt.setString(7, dto.getFname());
 			int i = pstmt.executeUpdate();
 			if(i>0) {
 				return true;
@@ -351,8 +383,8 @@ class GroupTabDAO {
 				int limit = rs.getInt(6);
 				Date rdate = rs.getDate(7);
 				int mNum = rs.getInt(8);
-				 System.out.println("gLoc(DAO) groupGetUpdate: " + gLoc);
-				list.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum));
+				String fname = rs.getString(9);
+				list.add(new GroupTab(gSeq, gLoc, gName, gIntro, interest, limit, rdate, mNum, fname));
 			}
 			return list;
 		}catch(SQLException se) {

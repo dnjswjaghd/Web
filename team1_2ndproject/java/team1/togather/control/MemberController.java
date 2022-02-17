@@ -52,19 +52,21 @@ public class MemberController extends HttpServlet {
 		String gender = request.getParameter("gender");
 		String birth = request.getParameter("birth");
 		String pwd = request.getParameter("pwd");
+		String email = request.getParameter("email");
 		String phone = request.getParameter("phone");
 		String category = request.getParameter("category");
-		Member dto = new Member(-1,maddr,pfrloc,mname,gender,birth,pwd,phone,null,category,-1);
+		Member dto = new Member(-1,maddr,pfrloc,mname,gender,birth,pwd,email,phone,category,-1);
 		System.out.println("-------------------");
-		System.out.println(maddr);
-		System.out.println(pfrloc);
 		System.out.println(mname);
 		System.out.println(birth);
 		System.out.println(pwd);
-		System.out.println(pwd);
+		System.out.println(email);
 		System.out.println(phone);
-		System.out.println(gender);
+		System.out.println(maddr);
+		System.out.println(pfrloc);
 		System.out.println(category);
+		System.out.println(gender);
+		
 		
 		boolean flag =service.joinS(dto);
 		System.out.println(flag);
@@ -101,7 +103,7 @@ public class MemberController extends HttpServlet {
 		String category = request.getParameter("category");
 		System.out.println("카카오로그인:"+mname);
     	System.out.println("카카오로그인:"+email);
-		Member dto = new Member(-1,maddr,pfrloc,mname,gender,birth,pwd,phone,email,category,-1);
+		Member dto = new Member(-1,maddr,pfrloc,mname,gender,birth,pwd,email,phone,category,-1);
 		System.out.println("-------------------");
 		System.out.println("maddr: "+maddr);
 		System.out.println("관심지역:"+pfrloc);
@@ -177,7 +179,6 @@ public class MemberController extends HttpServlet {
     				String view ="checkphone.jsp";
 	    			RequestDispatcher rd =request.getRequestDispatcher(view);
 	    			rd.forward(request, response);
-    			
     			}
     	}catch(NumberFormatException ne) {	 
     		 Member m = service.loginemailS(phone);
@@ -185,7 +186,15 @@ public class MemberController extends HttpServlet {
     		 request.setAttribute("pwd",pwd);
     		 request.setAttribute("phone",phone);
     		 System.out.println("캐치: " +phone);
-    		 if(m != null && m.getEmail() !=null && m.getPwd() != null) {
+    		 if(m==null) {
+     			response.setContentType("text/html;charset=utf-8");
+     			PrintWriter pw = response.getWriter();
+     			pw.println("<script>");
+     			pw.println("alert('아이디가없습니다')");
+     			pw.println("location.href='login2.jsp'");
+     			pw.println("</script>");
+     			pw.close();
+     		}else {
     			if(phone.equals(m.getEmail()) && pwd.equals(m.getPwd())) {
     				HttpSession session = request.getSession(true);
     				session.setAttribute("userid",m.getMname());
@@ -199,16 +208,16 @@ public class MemberController extends HttpServlet {
     	            session.setAttribute("userEmail", m.getEmail());
     	            session.setAttribute("usermnum", m.getMnum());
     				System.out.println("1");
-    				String view ="checkemail.jsp";
-    				RequestDispatcher rd =request.getRequestDispatcher(view);
-    				rd.forward(request, response);
     				}
-    		}
+    			String view ="checkemail.jsp";
+				RequestDispatcher rd =request.getRequestDispatcher(view);
+				rd.forward(request, response);
+     		}
     	}
     }
     private void kakaologin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{			
     	String mname = request.getParameter("mname");
-    	String email = request.getParameter("email");
+    	String email = request.getParameter("email");//번호쳐도 이메일로 넘어옴
     	System.out.println("카카오로그인:"+mname);
     	System.out.println("카카오로그인:"+email);
     	MemberService service = MemberService.getInstance();
@@ -228,7 +237,9 @@ public class MemberController extends HttpServlet {
                 session.setAttribute("userbirth", m.getBirth());
                 session.setAttribute("userpwd", m.getPwd());
                 session.setAttribute("usermnum", m.getMnum());
-    			response.sendRedirect("../");		
+                String view ="checkemail.jsp";
+				RequestDispatcher rd =request.getRequestDispatcher(view);
+				rd.forward(request, response);	
     			}
     	}else {    		
 			String view = "kakaojoin2.jsp";

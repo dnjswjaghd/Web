@@ -50,6 +50,55 @@ public class MemInGroupDAO {
 			}catch(SQLException se) {}
 		}
 	}
+	boolean MemInGroupDel(long gSeq, long mnum) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = "delete from MEM_IN_GROUP where gseq =? and MNUM = ?";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setLong(1, gSeq);
+			pstmt.setLong(2, mnum);
+			int i = pstmt.executeUpdate();
+			if(i>0) {
+				return true;
+			}else {
+				return false;
+			}		
+		}catch(SQLException se) {
+			System.out.println("#GroupInsert() se: " + se);
+			return false;
+		}finally {
+			try {
+				if(con != null) con.close();
+				if(pstmt !=null) pstmt.close();
+			}catch(SQLException se) {}
+		}
+	}
+	boolean MemInGroupDel(long gSeq) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = "delete from MEM_IN_GROUP where gseq =?";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setLong(1, gSeq);
+			int i = pstmt.executeUpdate();
+			if(i>0) {
+				return true;
+			}else {
+				return false;
+			}		
+		}catch(SQLException se) {
+			System.out.println("#GroupInsert() se: " + se);
+			return false;
+		}finally {
+			try {
+				if(con != null) con.close();
+				if(pstmt !=null) pstmt.close();
+			}catch(SQLException se) {}
+		}
+	}
 	
 }
 	

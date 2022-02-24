@@ -17,4 +17,7 @@ public class Board {
 	private String subject;
 	private String content;
 	private Date rdate;
+	private String fname ="";
+	private String ofname ="";
+	private long fsize;
 }

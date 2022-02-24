@@ -1,5 +1,7 @@
 package jin.board.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jin.board.domain.Board;
 import jin.board.domain.BoardListResult;
 
@@ -10,4 +12,6 @@ public interface BoardService {
 	void write(Board board);
 	void edit(Board board);
 	void remove(long seq);
+	String saveStore(long seq, MultipartFile file); 
+	Long selectMaxSeq(); 
 }

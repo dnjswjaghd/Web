@@ -58,23 +58,42 @@
      
 </TABLE>
 <hr width='600' size='2' color='gray' noshade>
-<font color='gray' size='3' face='휴먼편지체'>
-    (총페이지수 : ${listResult.totalPageCount}) 
-    &nbsp;&nbsp;&nbsp;
-    <c:forEach begin="1" end="${listResult.totalPageCount}" var="i">
-        <a href="list.do?cp=${i}">
-   			<c:choose>
-   			    <c:when test="${i==listResult.cp}">
-                	<strong>${i}</strong>
-                </c:when>
-                <c:otherwise>
-                    ${i}
-                </c:otherwise>
-			</c:choose>
-    	</a>&nbsp;
-    </c:forEach>
-    ( TOTAL : ${listResult.totalCount} )
-    
+
+	<font color='gray' size='3' face='휴먼편지체'>
+	<c:if test="${optionFlag == false}">
+	    (총페이지수 : ${listResult.totalPageCount}) 
+	    &nbsp;&nbsp;&nbsp;
+	    <c:forEach begin="1" end="${listResult.totalPageCount}" var="i">
+	        <a href="list.do?cp=${i}">
+	   			<c:choose>
+	   			    <c:when test="${i==listResult.cp}">
+	                	<strong>${i}</strong>
+	                </c:when>
+	                <c:otherwise>
+	                    ${i}
+	                </c:otherwise>
+				</c:choose>
+	    	</a>&nbsp;
+	    </c:forEach>
+	    ( TOTAL : ${listResult.totalCount} )
+	  </c:if>
+	  <c:if test="${optionFlag == true}">
+	    (총페이지수 : ${listResult.totalPageCount}) 
+	    &nbsp;&nbsp;&nbsp;
+	    <c:forEach begin="1" end="${listResult.totalPageCount}" var="i">
+	        <a href="list.do?cp=${i}&option=${option}&ocontent=${ocontent}">
+	   			<c:choose>
+	   			    <c:when test="${i==listResult.cp}">
+	                	<strong>${i}</strong>
+	                </c:when>
+	                <c:otherwise>
+	                    ${i}
+	                </c:otherwise>
+				</c:choose>
+	    	</a>&nbsp;
+	    </c:forEach>
+	    ( TOTAL : ${listResult.totalCount} )
+	  </c:if>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
        페이지 싸이즈 : 
     <select id="psId" name="ps" onchange="f(this)">
@@ -109,7 +128,7 @@
 </font>
 <hr width='600' size='2' color='gray' noshade>
      
-    <form action="list.do?">
+    <form action="list.do">
       <select name="option">
         <option value="subject">제목</option>
         <option value="writer">글쓴이</option>

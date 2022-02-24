@@ -44,6 +44,17 @@
 	<td align='center'>Contents</td>
 	<td>${board.content}</td>
 	</tr>
+	<tr>
+	<td align='center'>File</td>
+		<c:if test="${empty files}">
+			<td align='center'>다운로드할 파일이 없습니다</td>
+		</c:if>>
+		<td>
+			<c:forEach items="${files}" var="file">
+				<a href="download.do?fname=${file.name}">||${file.name}||</a>
+			</c:forEach>
+		</td>
+	</tr>
 	</table>
 	
 	<hr width='600' size='2' color='gray' noshade>

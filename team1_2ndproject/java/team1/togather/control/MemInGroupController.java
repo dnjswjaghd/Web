@@ -1,4 +1,4 @@
-package team1.togather.control;
+package team1.togather.control; 
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,8 +29,8 @@ public class MemInGroupController extends HttpServlet {
 		if(m!=null) {
 			m = m.trim();
 			switch(m){
-			case "MemInGroupgroupjoin" : MemInGroupgroupjoin(request,response);break;//¸ğÀÔ°¡ÀÔÇÏ±â
-			case "MemInGroupgroupdel" : MemInGroupgroupdel(request,response);break;//¸ğÀÔÅ»ÅğÇÏ±â
+			case "MemInGroupgroupjoin" : MemInGroupgroupjoin(request,response);break;//ëª¨ì…ê°€ì…í•˜ê¸°
+			case "MemInGroupgroupdel" : MemInGroupgroupdel(request,response);break;//ëª¨ì…íƒˆí‡´í•˜ê¸°
 			}
 		}else {
 			response.sendRedirect("../");
@@ -47,14 +47,14 @@ public class MemInGroupController extends HttpServlet {
     		response.setContentType("text/html;charset=utf-8");
 			PrintWriter pw = response.getWriter();
 			pw.println("<script>");
-			pw.println("alert('·Î±×ÀÎÀÌ ÇÊ¿äÇÕ´Ï´Ù')");
+			pw.println("alert('ë¡œê·¸ì¸ì´ í•„ìš”í•©ë‹ˆë‹¤')");
 			
 			pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
 			pw.println("</script>");
 			pw.close();
     	}else {
     		mNum=(Long)session.getAttribute("usermnum");
-	    	System.out.println("¼¼¼Ç:"+(Long)session.getAttribute("usermnum"));
+	    	System.out.println("ì„¸ì…˜:"+(Long)session.getAttribute("usermnum"));
 	    	System.out.println("long:"+mNum);
 	    	
 	    	MemInGroup dto = new MemInGroup(gSeq,mNum,-1);
@@ -76,14 +76,14 @@ public class MemInGroupController extends HttpServlet {
     		response.setContentType("text/html;charset=utf-8");
 			PrintWriter pw = response.getWriter();
 			pw.println("<script>");
-			pw.println("alert('·Î±×ÀÎÀÌ ÇÊ¿äÇÕ´Ï´Ù')");
+			pw.println("alert('ë¡œê·¸ì¸ì´ í•„ìš”í•©ë‹ˆë‹¤')");
 			
 			pw.println("location.href='groupTab.do?m=groupInfo&gSeq="+gSeq+"'");
 			pw.println("</script>");
 			pw.close();
     	}else {
 	    	mNum= (Long)session.getAttribute("usermnum");
-	    	System.out.println("¼¼¼Ç:"+(Long)session.getAttribute("usermnum"));
+	    	System.out.println("ì„¸ì…˜:"+(Long)session.getAttribute("usermnum"));
 	    	System.out.println("long:"+mNum);
 	    	
 	    	 service.MemInGroupDelS(gSeq,mNum);

@@ -1,6 +1,6 @@
 package team1.togather.control;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,17 +48,17 @@ public class BoardController extends HttpServlet {
 			ps=Integer.parseInt(request.getParameter("ps"));
 		}
 		
-		System.out.println("boardÄÁÆ®·Ñ·¯¾È pageAt: "+pageAt+" ps: "+ ps);
-		ArrayList<Board> blist = service.blistS(pageAt, ps); // db³»¿ëÀ» °®°í¿È
+		System.out.println("boardì»¨íŠ¸ë¡¤ëŸ¬ì•ˆ pageAt: "+pageAt+" ps: "+ ps);
+		ArrayList<Board> blist = service.blistS(pageAt, ps); // dbë‚´ìš©ì„ ê°–ê³ ì˜´
 		ArrayList<Board> wholeblist = service.blistS();
-		request.setAttribute("blist", blist); // jspÇÑÅ× º¸³»ÁÜ 
+		request.setAttribute("blist", blist); // jspí•œí…Œ ë³´ë‚´ì¤Œ 
 		request.setAttribute("wholeblist", wholeblist);
 		int totalCount = wholeblist.size();
 		int totalPage = (int) Math.ceil(totalCount / (double) ps);
 		int pageCount = 5;
 		int startPage = ((pageAt - 1) / pageCount) * pageCount + 1;
 		int endPage = startPage + pageCount - 1;
-		// Ãß°¡·Î Á¶°Ç ¼³Á¤
+		// ì¶”ê°€ë¡œ ì¡°ê±´ ì„¤ì •
 		if( totalPage < pageAt) {
 			pageAt = totalPage;
 		}
@@ -81,7 +81,7 @@ public class BoardController extends HttpServlet {
 	}
 	private void olist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		BoardService service = BoardService.getInstance();
-		String option = request.getParameter("option"); //sql¹® whereÀı ¿ŞÂÊÇ×
+		String option = request.getParameter("option"); //sqlë¬¸ whereì ˆ ì™¼ìª½í•­
 		String ocontent = request.getParameter("ocontent");
 		if(option.equals("none") || ocontent.equals("")) {
 			String view = "board.do";
@@ -98,8 +98,8 @@ public class BoardController extends HttpServlet {
 			ps=Integer.parseInt(request.getParameter("ps"));
 		}
 		
-		ArrayList<Board> blist = service.blistS(option, ocontent); // db³»¿ëÀ» °®°í¿È
-		request.setAttribute("blist", blist); // jspÇÑÅ× º¸³»ÁÜ
+		ArrayList<Board> blist = service.blistS(option, ocontent); // dbë‚´ìš©ì„ ê°–ê³ ì˜´
+		request.setAttribute("blist", blist); // jspí•œí…Œ ë³´ë‚´ì¤Œ
         
 		ArrayList<Board> wholeblist = service.blistS();
 		request.setAttribute("wholeblist", blist);
@@ -108,7 +108,7 @@ public class BoardController extends HttpServlet {
 		int pageCount = 5;
 		int startPage = ((pageAt - 1) / pageCount) * pageCount + 1;
 		int endPage = startPage + pageCount - 1;
-		// Ãß°¡·Î Á¶°Ç ¼³Á¤
+		// ì¶”ê°€ë¡œ ì¡°ê±´ ì„¤ì •
 		if( totalPage < pageAt) {
 			pageAt = totalPage;
 		}
@@ -139,14 +139,14 @@ public class BoardController extends HttpServlet {
 		System.out.println(name);
 		
 		HttpSession session  = request.getSession();
-		String userphone = "À¯ÀúÆù";
+		String userphone = "ìœ ì €í°";
 		if((String)session.getAttribute("userphone")!=null) {
-		System.out.println("³Î°ªÈ®ÀÎ");
+		System.out.println("ë„ê°’í™•ì¸");
 			userphone =(String)session.getAttribute("userphone");
 		
 		}
 		
-		request.setAttribute("board", board); // jspÇÑÅ× º¸³»ÁÜ
+		request.setAttribute("board", board); // jspí•œí…Œ ë³´ë‚´ì¤Œ
 		request.setAttribute("name", name);
 		String view = "content2.jsp";
 		
@@ -199,7 +199,7 @@ public class BoardController extends HttpServlet {
 		Board board = service.getContentS(bnum);	
 		String name = service.getNameByMnumS(board.getMnum());
 		
-		request.setAttribute("board", board); // jspÇÑÅ× º¸³»ÁÜ
+		request.setAttribute("board", board); // jspí•œí…Œ ë³´ë‚´ì¤Œ
 		request.setAttribute("name", name);
 		
 		String view = "updateform2.jsp";

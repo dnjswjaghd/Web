@@ -21,3 +21,4 @@ public class Board {
 	private String ofname ="";
 	private long fsize;
 }
+  

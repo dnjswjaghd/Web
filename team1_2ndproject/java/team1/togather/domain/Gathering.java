@@ -5,7 +5,7 @@ public class Gathering {
 	private String ga_name;
 	private String ga_date;
 	private String time;
-	private String ga_place;
+	private String ga_place; 
 	private String price;
 	private int ga_limit;
 	private long gSeq;

@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import team1.togather.domain.*;
-
+  
 class GroupTabDAO {
 	private DataSource ds;
 	GroupTabDAO() {
@@ -452,7 +452,7 @@ class GroupTabDAO {
 			pstmt.setString(4, dto.getGa_place());
 			pstmt.setString(5, dto.getPrice());
 			pstmt.setInt(6, dto.getGa_limit());
-			pstmt.setLong(7, dto.getgSeq()); //∏¿”¿« GSEQ∏¶ ∞°¡ÆøÕæﬂ«‘
+			pstmt.setLong(7, dto.getgSeq()); //¬∏√∞√Ä√ì√Ä√á GSEQ¬∏¬¶ ¬∞¬°√Å¬Æ¬ø√ç¬æ√ü√á√î
 			int i = pstmt.executeUpdate();
 			if(i>0) {
 				return true;
@@ -488,7 +488,7 @@ class GroupTabDAO {
 				String price = rs.getString(6);
 				int ga_limit = rs.getInt(7);
 				gatheringList.add(new Gathering(ga_seq, ga_name, ga_date, time, ga_place, price, ga_limit, gSeq));
-				System.out.println("C_gatheringList¿« gSeq: " + gSeq);
+				System.out.println("C_gatheringList√Ä√á gSeq: " + gSeq);
 			}
 			return gatheringList;
 		}catch(SQLException se) {

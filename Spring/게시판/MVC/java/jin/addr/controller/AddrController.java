@@ -13,6 +13,6 @@ public class AddrController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
 		
-		return "index";
+		 return "index";
 	}
 }

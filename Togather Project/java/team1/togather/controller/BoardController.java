@@ -20,16 +20,16 @@ import team1.togather.domain.Board;
 import team1.togather.domain.BoardCriteria;
 import team1.togather.domain.PageMaker;
 import team1.togather.domain.Reply;
-import team1.togather.service.BoardServiceImpl;
-import team1.togather.service.ReplyServiceImpl;
+import team1.togather.service.BoardService;
+import team1.togather.service.ReplyService;
 
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 	@Autowired
-	private BoardServiceImpl service;
+	private BoardService service;
 	@Autowired
-	private ReplyServiceImpl replyservice;
+	private ReplyService replyservice;
 	
 	@ResponseBody
 	@GetMapping("listRest")
@@ -42,17 +42,6 @@ public class BoardController {
 		map.put("boardSearch", boardSearch);
 		map.put("startRow", String.valueOf(cri.getStartRow()));
 		map.put("endRow", String.valueOf(cri.getEndRow()));
-		/*
-		if(option.equals("btitle")){
-			
-		}
-		if(option.equals("bcategory")){
-			
-		}
-		if(option.equals("mname")){
-			
-		}
-		*/
 		return service.getBoardBySearch(map);
 	}
 	@GetMapping("/listCri")
@@ -120,6 +109,7 @@ public class BoardController {
 	}
 	@GetMapping("boardContent")
 	public ModelAndView boardContent(Long bnum, HttpServletRequest request) {
+		service.updateBView(bnum);
 		Board board = service.getBoardContent(bnum);
 		ArrayList<Reply> reply = replyservice.getReply(bnum);
 		ModelAndView mv = new ModelAndView("board/boardMainContent","board",board);

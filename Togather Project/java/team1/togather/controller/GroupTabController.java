@@ -4,13 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
- 
+
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +22,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import team1.togather.domain.Gathering;
 import team1.togather.domain.GroupTab;
-import team1.togather.domain.MemInGroup; 
+import team1.togather.domain.MemInGroup;
 import team1.togather.domain.Member;
 import team1.togather.fileset.Path;
+import team1.togather.service.GatheringService;
 import team1.togather.service.GroupTabService;
 
 @Log4j
@@ -32,14 +35,12 @@ import team1.togather.service.GroupTabService;
 @AllArgsConstructor
 @RequestMapping("groupTab")
 public class GroupTabController {
+	@Autowired
 	private GroupTabService groupTabService;
+	@Autowired
+	private GatheringService gatheringService;
 
-	@GetMapping("groupList.do")
-	public ModelAndView list() {
-		List<GroupTab> list = groupTabService.selectAllS();
-		ModelAndView mv = new ModelAndView("groupTab/groupList", "list", list);
-		return mv;
-	}
+
 	@GetMapping("myGroup.do")
 	public ModelAndView myGroup(MemInGroup memInGroup) {
 		List<GroupTab> list = groupTabService.myGroup(memInGroup);
@@ -60,12 +61,15 @@ public class GroupTabController {
 		Member groupMemberName = groupTabService.groupInfoMemberName(gseq);
 		List<Map<String,String>> memInGroupName = groupTabService.memInGroupName(memInGroup);
 		Long memInGroupCheck = groupTabService.memInGroupCheck(memInGroup);
-		System.out.println("memInGroupName: "+memInGroupName);
+		List<Gathering> gatheringList = gatheringService.ga_selectByGseqS(gseq); //정모 목록 가져오기 (대현추가)
+		Long gatheringCountInGroup = groupTabService.gatheringCountInGroup(gseq);
 		ModelAndView mv = new ModelAndView("groupTab/groupInfo", "groupInfo", groupInfo);
 		mv.addObject("groupMemberCount", groupMemberCount);
 		mv.addObject("groupMemberName", groupMemberName);
 		mv.addObject("memInGroupCheck",memInGroupCheck);
 		mv.addObject("memInGroupName",memInGroupName);
+		mv.addObject("gatheringList", gatheringList);//정모 목록 가져오기 (대현추가)
+		mv.addObject("gatheringCountInGroup", gatheringCountInGroup);//모임info 정모갯수(대현추가)
 
 		return mv;
 	}
@@ -104,8 +108,6 @@ public class GroupTabController {
 	public Long groupUpdatecheck(MemInGroup memInGroup) {
 		//0=모임장 1=운영진 2=일반
 		Long grade = groupTabService.grade(memInGroup);
-		System.out.println("grade : "+ grade);
-		//ModelAndView mv = new ModelAndView("groupTab/groupUpdate", "updateList", updateList);
 		if(grade ==null) {//가입안한 사람
 			grade=(long) 3;
 			return grade;
@@ -122,9 +124,7 @@ public class GroupTabController {
 	public Long groupDeletecheck(MemInGroup memInGroup) {
 		//0=모임장 1=운영진 2=일반
 		Long grade = groupTabService.grade(memInGroup);
-		System.out.println("grade : "+ grade);
 		if(grade ==null) {//가입안한 사람
-			System.out.println("널일때"+grade);
 			grade=(long) 3;
 			return grade;
 		}else {	
@@ -139,29 +139,54 @@ public class GroupTabController {
 		
 	}
 	@PostMapping("groupUpdate.do")
-	public String groupUpdate(GroupTab groupTab, HttpServletRequest request) {
+	public String groupUpdate(GroupTab groupTab, HttpSession session) {
+		System.out.println("들어옴업두");
 		long gseq = groupTab.getGseq();
-		log.info("groupUpdate_gseq: " + gseq + "groupUpdate_groupTab: " + groupTab);
+		System.out.println("groupUpdate_gseq: " + gseq + "groupUpdate_groupTab: " + groupTab);
+		
+		String fname = groupTab.getFname();
+		MultipartFile uploadFile = groupTab.getUploadFile();
+		if(!uploadFile.isEmpty()) {
+			String ofname = uploadFile.getOriginalFilename(); //파일의 원본이름
+			int idx = ofname.lastIndexOf("."); //파일명까지 자르기
+			String ofheader = ofname.substring(0, idx);
+			String ext = FilenameUtils.getExtension(ofname); //파일의 확장자 구하기
+			
+			UUID uuid = UUID.randomUUID(); 
+			fname = ofheader + uuid + "." + ext;
+			try {
+				uploadFile.transferTo(new File(Path.FILE_STORE + fname));
+			}catch(IOException ie) {}
+			groupTab.setFname(fname);
+		}
 		
 		groupTabService.updateS(groupTab);
 		
-		return "redirect:groupInfo.do?gseq="+gseq;
+		Member m =(Member)session.getAttribute("m");
+		return "redirect:groupInfo.do?gseq="+gseq+"&mnum="+m.getMnum();
 	}
 	@PostMapping("memInGroup")
 	@ResponseBody
-	public String memInGroup(MemInGroup memInGroup,HttpSession session) {
-		groupTabService.memInGroup(memInGroup);
-		return "ok";
+	public int memInGroup(MemInGroup memInGroup,HttpSession session) {
+		int check=0;
+		long limit = groupTabService.LIMIT(memInGroup);
+		Long groupMemberCount = groupTabService.groupMemberCount(memInGroup.getGseq());
+		if(limit<=groupMemberCount) {
+			check=1;
+			
+			
+		}else {
+			groupTabService.memInGroup(memInGroup);
+			check=0;
+		}
+		return check;
 	}
 	@PostMapping("groupQuit")
 	@ResponseBody
 	public String groupQuit(MemInGroup memInGroup,long gseq) {
-		System.out.println("groupQuit"+memInGroup);
 		List<Map<String,String>> memInGroupName = groupTabService.memInGroupName(memInGroup);
-		System.out.println("memInGroupName: "+memInGroupName);
 		groupTabService.groupQuit(memInGroup);
 		Long groupMemberCount = groupTabService.groupMemberCount(gseq);
-		System.out.println("groupMemberCount: "+groupMemberCount);
 		String result="";
 		if(groupMemberCount==0) {
 			groupTabService.memInGroupDelete(gseq);
@@ -170,7 +195,20 @@ public class GroupTabController {
 		}else {
 			result="1";
 		}
-		System.out.println("result: "+result);
 		return result;
 	}
+	
+	//03.26 대현추가
+		@PostMapping("gatheringCreateCheck")
+		@ResponseBody
+		public Long gatheringCreateCheck(long gseq) {
+			System.out.println("#Controller: " + gseq);
+			Long check = groupTabService.gatheringCountInGroup(gseq);
+			if(check >= 5) {
+				System.out.println("#gatheringCreateCheck: " + check);
+				return (long)0;
+			}else{
+				return (long)1;
+			}
+		}
 }

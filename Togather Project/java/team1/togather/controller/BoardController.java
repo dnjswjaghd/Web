@@ -12,12 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping; 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import team1.togather.domain.Board;
 import team1.togather.domain.BoardCriteria;
+import team1.togather.domain.Member;
 import team1.togather.domain.PageMaker;
 import team1.togather.domain.Reply;
 import team1.togather.service.BoardService;
@@ -44,9 +46,32 @@ public class BoardController {
 		map.put("endRow", String.valueOf(cri.getEndRow()));
 		return service.getBoardBySearch(map);
 	}
+	@ResponseBody
+	@PostMapping("addReply")
+	public List<Reply> replyRest(@RequestBody Reply reply){
+		replyservice.insert(reply);
+		return replyservice.getReply(reply.getBnum());
+	}
 	@GetMapping("/listCri")
 	public void listCriGET(Model model, BoardCriteria cri) {
 		model.addAttribute("boardList", service.listCri(cri));
+	}
+	@ResponseBody
+	@PostMapping("setR_like")
+	public Long setR_like(@RequestBody Reply reply) {
+		System.out.println("보컨 setRlike mnum: "+ reply.getMnum());
+		System.out.println("보드컨트롤러setR_like rseq: "+reply.getRseq());
+		Map<String, Object> map = new HashMap<>();
+		map.put("rseq", reply.getRseq());
+		map.put("mnum", reply.getMnum());
+		if(replyservice.checkRLIKE(map)==null) {
+			replyservice.insertRLIKE(map);
+			replyservice.addLike(reply);
+		}else if(replyservice.checkRLIKE(map)==1) {
+			replyservice.deleteRLIKE(map);
+			replyservice.cancelLike(reply);
+		}
+		return replyservice.getR_like(reply.getRseq());
 	}
 	
 	@GetMapping("listPage")

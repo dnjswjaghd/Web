@@ -1,9 +1,13 @@
 package team1.togather.controller;
 
-import static team1.togather.constant.CheckedConstant.YES_ID_PWD;
+import static team1.togather.constant.CheckedConstant.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -15,8 +19,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
 import team1.togather.domain.Block;
+import team1.togather.domain.Category;
+import team1.togather.domain.IndexCriteria;
+import team1.togather.domain.IndexPage;
 import team1.togather.domain.MemInGroup;
 import team1.togather.domain.Member;
+import team1.togather.domain.Message;
 import team1.togather.service.MemberService;
 
 
@@ -28,16 +36,35 @@ public class MemberController {
 	private MemberService service;
 	
 	@GetMapping("/joinform.do")
-	public String join() {
-		return "member/join";
+	public ModelAndView join() {
+		List<Category> firstCategory = service.firstCategory();
+		ModelAndView mv = new ModelAndView("member/join","firstCategory",firstCategory);
+		return mv;
+	}
+	
+	@GetMapping("/category")
+	@ResponseBody
+	public List<Category> category(Category category,long sequence) {
+
+		List<Category> categorys= new ArrayList<>();
+		if(sequence==2) {
+			categorys = service.secondCategory(category);
+		}else if(sequence==3) {
+			categorys = service.thirdCategory(category);
+		}
+		
+		return categorys;
 	}
 	
 	
-	@PostMapping("/join")
+	@RequestMapping("/join")
 	@ResponseBody
-	public int join(Member member) {
+	public int join(Member member,HttpSession session,String category_first,String category_second,String category_third) {
 		int join = service.join(member);
-		System.out.println("join :"+join);
+		if(join==YES_JOIN) {
+			Member m = service.login(member);
+			session.setAttribute("m", m);
+		}
 		return join;
 	}
 	
@@ -45,10 +72,11 @@ public class MemberController {
 	public String login() {
 		return "member/login";
 	}
-	
+
 	@GetMapping("/memberInfo")
 	public ModelAndView memberInfo(MemInGroup meminGroup,HttpSession session) {
 		Member memberInfo = service.memberInfo(meminGroup);
+		long gseq=meminGroup.getGseq();
 		List<String> blockedNameList = service.blockedNameList(session);
 		String blockedCheck="";
 		if(blockedNameList.size()!=0) {
@@ -60,21 +88,22 @@ public class MemberController {
 		}
 		ModelAndView mv = new ModelAndView("/member/memberInfo", "memberInfo", memberInfo);
 		mv.addObject("blockedCheck", blockedCheck);
+		mv.addObject("gseq", gseq);
 		return mv;
 	}
+	
+	
 	
 	@PostMapping("/blocking")
 	@ResponseBody
 	public int blocking(Block block) {
 		service.blocking(block);
-		System.out.println("block: "+block);
 		return 1;
 	}
 	@PostMapping("/blockingCancel")
 	@ResponseBody
 	public int blockingCancel(Block block) {
 		service.blockingCancel(block);
-		System.out.println("block: "+block);
 		return 1;
 	}
 	@PostMapping("/login")
@@ -94,17 +123,115 @@ public class MemberController {
 		if(kakaologincheck==YES_ID_PWD) {
 			Member m = service.kakaologin(member);
 			session.setAttribute("m", m);
-			System.out.println("로그인성공");	
+			System.out.println("카카오로그인 m: "+m);
 		}
 		return  kakaologincheck;
 	}
 	@GetMapping("/logout.do")
 	public String logout(HttpSession session) {
 		session.invalidate();
-		String logout="";
-		logout+="<script>";
-		logout+="history";
-		logout+="</script>";
 		return "redirect:/";
+	}
+	/////////////////////////
+	@GetMapping("/sendMessageForm")
+	public ModelAndView sendMessageForm(Message message,long gseq) {
+		ModelAndView mv = new ModelAndView("member/sendMessageForm", "message", message);
+		mv.addObject("gseq", gseq);
+		return mv;
+	}
+	
+	@PostMapping("/sendMessage")
+	public String sendMessage(Message message,long gseq) {
+		service.sendMessage(message);
+		String memberInfoBack="";
+		memberInfoBack+="redirect:memberInfo?mnum="+message.getFrom_mnum()+"&gseq="+gseq;
+		return memberInfoBack;
+	}
+	
+	@GetMapping("/messageList")
+	public ModelAndView messageList(HttpSession session,IndexCriteria cri,HttpServletRequest request) {
+		ModelAndView mv = new ModelAndView();
+		Map<String,Object> map = new HashMap<String,Object>();
+		Member m = (Member)session.getAttribute("m");
+		map.put("mnum",m.getMnum());
+		map.put("startRow",cri.getStartRow());
+		map.put("endRow",cri.getEndRow());
+		if(request.getParameter("page")!=null) {
+			String pageAt = request.getParameter("page");
+			cri.setPage(Integer.parseInt(pageAt));
+		}
+		if(request.getParameter("pageSize")!=null) {
+			String pageSize = request.getParameter("pageSize");
+			cri.setPageSize(Integer.parseInt(pageSize));
+		}
+		IndexPage pm = new IndexPage();
+		pm.setCri(cri);
+		pm.setTotalCount(service.messageCount(m.getMnum())); //calcDate()실행
+		
+		mv.addObject("pm", pm);
+		mv.addObject("cri", cri);
+		List<Message> messageList = service.messageList(map);
+		mv.addObject("messageList", messageList);
+		return mv;
+	}
+	
+	@GetMapping("/messageContent")
+	public ModelAndView messageContent(long meseq,IndexCriteria cri,HttpServletRequest request) {
+		Message messageContent = service.messageContent(meseq);
+		service.messageChecked(meseq);
+		ModelAndView mv = new ModelAndView("member/messageContent", "messageContent", messageContent);
+		if(request.getParameter("page")!=null) {
+			String pageAt = request.getParameter("page");
+			mv.addObject("page", pageAt);
+		}
+		if(request.getParameter("pageSize")!=null) {
+			String pageSize = request.getParameter("pageSize");
+			mv.addObject("pageSize", pageSize);
+		}
+		return mv;
+	}
+	
+	@PostMapping("/replyToMessage")
+	public String replyToMessage(Message message,IndexCriteria cri,HttpServletRequest request) {
+		service.replyToMessage(message);
+		String pageAt="";
+		String pageSize="";
+		if(request.getParameter("page")!=null) {
+			 pageAt = request.getParameter("page");	
+		}
+		if(request.getParameter("pageSize")!=null) {
+			pageSize = request.getParameter("pageSize");
+		}
+		return "redirect:messageContent?mnum="+message.getTo_mnum()+"&page="+pageAt+"&pageSize="+pageSize+"&meseq="+message.getMeseq();
+	}
+	
+	@GetMapping("/messageDelete")
+	public String messageDelete(long meseq,long mnum,IndexCriteria cri,HttpServletRequest request) {
+		service.messageDelete(meseq);
+		String pageAt="";
+		String pageSize="";
+		if(request.getParameter("page")!=null) {
+			 pageAt = request.getParameter("page");	
+		}
+		if(request.getParameter("pageSize")!=null) {
+			pageSize = request.getParameter("pageSize");
+		}
+		return "redirect:messageList?mnum="+mnum+"&page="+pageAt+"&pageSize="+pageSize;
+	}
+	
+	@PostMapping("/nextMessageCheck")
+	@ResponseBody
+	public Long nextMessageCheck(Message message) {
+		Long nextMeseq = service.nextPostMessage(message);
+		return nextMeseq;
+		
+	}
+	
+	@PostMapping("/previousMessage")
+	@ResponseBody
+	public Long previousMessage(Message message) {
+		Long nextMeseq = service.previousMessage(message);
+		return nextMeseq;
+		
 	}
 }

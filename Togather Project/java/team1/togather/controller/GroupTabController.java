@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import team1.togather.domain.GroupTab;
-import team1.togather.domain.MemInGroup;
+import team1.togather.domain.MemInGroup; 
 import team1.togather.domain.Member;
 import team1.togather.fileset.Path;
 import team1.togather.service.GroupTabService;

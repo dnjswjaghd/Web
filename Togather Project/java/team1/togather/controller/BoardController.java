@@ -32,7 +32,7 @@ public class BoardController {
 	private BoardService service;
 	@Autowired
 	private ReplyService replyservice;
-	
+	 
 	@ResponseBody
 	@GetMapping("listRest")
 	public List<Board> listRest(String option, String boardSearch, Integer page, Integer pageSize){

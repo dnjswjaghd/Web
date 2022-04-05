@@ -70,7 +70,7 @@ public class BoardController {
 		}else if(replyservice.checkRLIKE(map)==1) {
 			replyservice.deleteRLIKE(map);
 			replyservice.cancelLike(reply);
-		}
+		} 
 		return replyservice.getR_like(reply.getRseq());
 	}
 	

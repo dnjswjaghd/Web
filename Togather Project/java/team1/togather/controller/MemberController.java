@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
 import team1.togather.domain.Block;
-import team1.togather.domain.Category;
+import team1.togather.domain.Category; 
 import team1.togather.domain.IndexCriteria;
 import team1.togather.domain.IndexPage;
 import team1.togather.domain.MemInGroup;

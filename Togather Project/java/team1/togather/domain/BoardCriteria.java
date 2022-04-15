@@ -7,7 +7,7 @@ public class BoardCriteria {
 	private int page;
 	private int pageSize;
 	private String option ="글쓴이";
-	private String ocontent = "장";
+	private String ocontent = "장"; 
 	
 	public BoardCriteria(int page, int pageSize) {
 		this.page = page;

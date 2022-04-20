@@ -38,7 +38,7 @@ public class GroupTabController {
 	@Autowired
 	private GroupTabService groupTabService;
 	@Autowired
-	private GatheringService gatheringService;
+	private GatheringService gatheringService; 
 
 
 	@GetMapping("myGroup.do")

@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j; 
 import team1.togather.domain.Gathering;
 import team1.togather.domain.GroupTab;
 import team1.togather.domain.MemInGroup;
